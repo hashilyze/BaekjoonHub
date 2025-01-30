@@ -3,8 +3,6 @@
 using namespace std;
 
 int solution(string A, string B) {
-    string dblA = A + A;
-    int shift = dblA.rfind(B);
-    if(shift == std::string::npos) return -1;
-    return A.size() - shift;
+    int shift = (B + B).find(A);
+    return shift == std::string::npos ? -1 : shift;
 }
