@@ -3,7 +3,7 @@
 using ll = long long;
 
 int N;
-std::map<ll, int> map;
+std::unordered_map<ll, int> map;
 
 int main(void){
     std::ios::sync_with_stdio(0); std::cin.tie(0);
@@ -15,13 +15,14 @@ int main(void){
         map[x] += 1;
     }
     
-    ll max = 0;
+    ll max_key = 0;
+    int max_value = 0;
     for(auto entry : map){
-        if(map[max] < entry.second){
-            max = entry.first;
+        if(max_value < entry.second || (max_value == entry.second && entry.first < max_key)){
+            std::tie(max_key, max_value) = entry;
         }
     }
-    std::cout << max;
+    std::cout << max_key;
     
     return 0;
 }
