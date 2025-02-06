@@ -12,16 +12,20 @@ public class Main {
 		st = new StringTokenizer(br.readLine());
 		
 		int[] ans = new int[N];
-		Deque<int[]> stk = new ArrayDeque<int[]>();
-		stk.offer(new int[] {0, 100_000_001});
+		int[] heights = new int[N + 1];
+		heights[0] = 100_000_000 + 1;
 		
+		int top = 0;
+		int[] stk = new int[N + 1];
+				
 		for(int i = 0; i < ans.length; ++i) {
 			int num = i + 1;
 			int height = Integer.parseInt(st.nextToken());
+			heights[num] = height;
 			
-			while(stk.peekLast()[1] < height) stk.pollLast();
-			ans[i] = stk.peekLast()[0];
-			stk.offer(new int[] {num, height});
+			while(heights[stk[top]] < height) --top;
+			ans[i] = stk[top];
+			stk[++top] = num;;
 		}
 		
 		
