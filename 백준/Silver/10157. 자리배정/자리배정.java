@@ -29,24 +29,23 @@ public class Main {
 		int next = 0;
 		int d = 0;
 		int c = -delta[d][0], r = -delta[d][1];
+		int dist;
 		--C;
 		
 		while(R > 0 || C > 0) {
-			for(int i = 0; i < R; ++i) {
-				c += delta[d][0];
-				r += delta[d][1];
-				++next;
-				if(next == K) return new int[] {c, r};
-			}
+			dist = Math.min(K - next, R);
+			c += delta[d][0] * dist;
+			r += delta[d][1] * dist;
+			next += dist;
+			if(next == K) return new int[] {c, r};
 			d = (d + 1) % delta.length;
 			--R;
 			
-			for(int i = 0; i < C; ++i) {
-				c += delta[d][0];
-				r += delta[d][1];
-				++next;
-				if(next == K) return new int[] {c, r};
-			}
+			dist = Math.min(K - next, C);
+			c += delta[d][0] * dist;
+			r += delta[d][1] * dist;
+			next += dist;
+			if(next == K) return new int[] {c, r};
 			d = (d + 1) % delta.length;
 			--C;
 		}
