@@ -26,30 +26,30 @@ public class Main {
 	}
 	
 	static int[] solution() {
-		final int last = C * R;
-		int[][] mat = new int[R][C];
-		
 		int next = 0;
-		int r = 0, c = 0, d = 0;
-		while(next++ < last) {
-			mat[r][c] = next;
-			if(next == K) return new int[] {c, r};
-			
-			int nc = c + delta[d][0];
-			int nr = r + delta[d][1];
-			if(!isSafePos(nr, nc) || mat[nr][nc] != 0) {
-				d = (d + 1) % delta.length;
-				nc = c + delta[d][0];
-				nr = r + delta[d][1];
+		int d = 0;
+		int c = -delta[d][0], r = -delta[d][1];
+		--C;
+		
+		while(R > 0 || C > 0) {
+			for(int i = 0; i < R; ++i) {
+				c += delta[d][0];
+				r += delta[d][1];
+				++next;
+				if(next == K) return new int[] {c, r};
 			}
+			d = (d + 1) % delta.length;
+			--R;
 			
-			c = nc;
-			r = nr;
+			for(int i = 0; i < C; ++i) {
+				c += delta[d][0];
+				r += delta[d][1];
+				++next;
+				if(next == K) return new int[] {c, r};
+			}
+			d = (d + 1) % delta.length;
+			--C;
 		}
 		return null;
-	}
-	
-	static boolean isSafePos(int r, int c) {
-		return 0 <= r && r < R && 0 <= c && c < C;
 	}
 }
