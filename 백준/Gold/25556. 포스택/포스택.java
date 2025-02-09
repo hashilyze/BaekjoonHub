@@ -8,27 +8,22 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		int N = Integer.parseInt(br.readLine());
-		int[] A = new int[N];
+		
+		int[] arr = new int[N];
 		st = new StringTokenizer(br.readLine());
-		for(int i = 0; i < N; ++i) A[i] = Integer.parseInt(st.nextToken());
-		String ans = solution(A);
-		bw.append(ans).flush();
-	}
-	
-	static String solution(int[] A) {
-		int[] stacks = new int[4];
-		Arrays.fill(stacks, 0);
-		for(int e : A) {
-			// e보다 작은 값이면서 가장 큰 값을 저장한 스택의 번호
-			int max = -1;
-			for(int i = 0; i < stacks.length; ++i) {
-				if(stacks[i] < e && (max == -1 || stacks[max] < stacks[i])) {
-					max = i;
+		for(int i = 0; i < N; ++i) arr[i] = Integer.parseInt(st.nextToken());
+		
+		int cnt = 0;
+		for(int i = 0; i < 4; ++i) {
+			int lower = 0;
+			for(int j = 0; j < N; ++j) {
+				if(lower < arr[j]) {
+					lower = arr[j];
+					arr[j] = 0;
+					++cnt;
 				}
 			}
-			if(max == -1) return "NO";
-			stacks[max] = e;
 		}
-		return "YES";
+		bw.append(cnt == N ? "YES" : "NO").flush();;
 	}
-}
+}	
