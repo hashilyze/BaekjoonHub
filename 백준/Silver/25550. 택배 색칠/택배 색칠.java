@@ -23,14 +23,12 @@ public class Main {
 		for(int y = 1; y <= N; ++y) { 
 			for(int x = 1; x <= M; ++x) {
 				if(mat[y][x] > 0) {
-					int[] a = new int[] {
-						mat[y][x] - 1,
-						mat[y + 1][x],
-						mat[y][x + 1],
-						mat[y - 1][x],
-						mat[y][x - 1]
-					};
-					sum += Arrays.stream(a).min().getAsInt();
+					int min = mat[y][x] - 1;
+					min = Math.min(min, mat[y + 1][x]);
+					min = Math.min(min, mat[y - 1][x]);
+					min = Math.min(min, mat[y][x + 1]);
+					min = Math.min(min, mat[y][x - 1]);
+					sum += min;
 				}
 			}
 		}
