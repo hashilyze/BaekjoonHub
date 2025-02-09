@@ -13,20 +13,25 @@ public class Main {
 	}
 	
 	static int solution(String txt) {
-		int ans = 0;
-		int tmp = 1;
-		Deque<Character> stk = new ArrayDeque<Character>();
-		for(int i = 0; i < txt.length(); ++i) {
-			char ch = txt.charAt(i);
+		Deque<Character> pStk = new ArrayDeque<Character>();
+		int[] vStk = new int[32];
+		
+		for(char ch : txt.toCharArray()) {
 			if(ch == '(' || ch == '[') {
-				tmp *= ch == '(' ? 2 : 3;
-				stk.offerLast(ch);
+				pStk.offer(ch);
 			} else if(ch == ')' || ch == ']') {
-				if(stk.isEmpty() || Math.abs(stk.pollLast() - ch) > 2) return 0;
-				if(txt.charAt(i - 1) == '(' || txt.charAt(i - 1) == '[') ans += tmp;
-				tmp /= ch == ')' ? 2 : 3;
+				if(pStk.isEmpty() || Math.abs(pStk.peekLast() - ch) > 2) 
+					return 0;
+				pStk.pollLast();
+				
+				int v = ch == ')' ? 2 : 3;
+				if(vStk[pStk.size() + 1] > 0) {
+					v *= vStk[pStk.size() + 1];
+					vStk[pStk.size() + 1] = 0;
+				}
+				vStk[pStk.size()] += v;
 			}
 		}
-		return stk.isEmpty() ? ans : 0;
+		return pStk.isEmpty() ? vStk[0] : 0;
 	}
 }
