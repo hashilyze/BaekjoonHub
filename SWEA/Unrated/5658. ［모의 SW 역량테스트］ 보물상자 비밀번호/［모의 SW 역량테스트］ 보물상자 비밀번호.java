@@ -26,7 +26,7 @@ public class Solution {
 	}
 	
 	static int solution(int N, int K, String S) {
-		TreeSet<Integer> set = new TreeSet<>((lhs, rhs) -> rhs - lhs);
+		Set<Integer> set = new HashSet<>();
 		
 		S += S;
 		final int quater = N >> 2;
@@ -36,10 +36,8 @@ public class Solution {
 			}
 		}
 		
-		Iterator<Integer> iterator = set.iterator();
-		for(int i = 0; i < K - 1; ++i) {
-			iterator.next();
-		}
-		return iterator.next();
+		Integer[] arr = set.toArray(new Integer[set.size()]);
+		Arrays.sort(arr);
+		return arr[arr.length - K];
 	}
 }
