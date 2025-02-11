@@ -1,56 +1,44 @@
-// Beakjoon 2252 - 줄 세우기
-// https://www.acmicpc.net/problem/2252
-
-#include <algorithm>
-#include <cstring>
 #include <iostream>
 #include <vector>
 
-// macros
-#define FASTIO std::ios_base::sync_with_stdio(false); std::cin.tie(NULL); std::cout.tie(NULL);
+#define FASTIO std::ios::sync_with_stdio(0); std::cin.tie(0);
+// types
+using ivec = std::vector<int>;
 // constants
 constexpr int MAX_N = 32'000;
 constexpr int MAX_M = 100'000;
-// variables
-int n, m;
-std::vector<int> adj[MAX_N + 1];
-int indegree[MAX_N + 1];
-bool isVisited[MAX_N + 1];
-std::vector<int> sorted;
+// variabls
+int N, M;
+ivec adj[MAX_N];
+bool isvisited[MAX_N] = { 0, };
+std::vector<int> result;
 
-void dfs(int u){
-    isVisited[u] = true;
-    for(int v : adj[u]){
-        if(isVisited[v]) continue;
-        dfs(v);
-    }
-    sorted.push_back(u);
+void dfs(int u) {
+	if (isvisited[u]) return;
+	isvisited[u] = true;
+
+	for (int v : adj[u]) {
+		dfs(v);
+	}
+	result.push_back(u);
 }
 
-void topologicalSort(){
-    std::memset(isVisited, 0x00, sizeof(isVisited));
-    for(int v = 1; v <= n; ++v){
-        if(isVisited[v] || indegree[v] > 0) continue;
-        dfs(v);
-    }
-    std::reverse(sorted.begin(), sorted.end());
+void solution() {
+	for (int u = 0; u < N; ++u) {
+		dfs(u);
+	}
 }
 
-int main(void){
+int main(void) {
     FASTIO
-
-    std::cin >> n >> m;
-    for(int i = 0; i < m; ++i){
-        int u, v;
-        std::cin >> u >> v;
-        adj[u].push_back(v);
-        indegree[v] += 1;
-    }
-
-    topologicalSort();
-
-    for(int elem : sorted) std::cout << elem << ' ';
-    std::cout << '\n';
-
-    return 0;
+	std::cin >> N >> M;
+	for (int i = 0; i < M; ++i) {
+		int u, v;
+		std::cin >> u >> v;
+		adj[u - 1].push_back(v - 1);
+	}
+	solution();
+	for (int i = N - 1; i >= 0; --i) {
+		std::cout << result[i] + 1 << ' ';
+	}
 }
