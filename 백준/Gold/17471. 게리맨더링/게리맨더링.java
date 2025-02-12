@@ -67,7 +67,7 @@ public class Main {
 	
 	static int solution() {
 		int min = Integer.MAX_VALUE;
-		for(int bitMask = 1, limit = (0x01 << N) - 1; bitMask < limit;bitMask += 1) {
+		for(int bitMask = 1, limit = (0x01 << (N - 1)); bitMask < limit;bitMask += 1) {
 			if(isBipartied(bitMask)) {
 				min = Math.min(min, diff(bitMask));
 			}
