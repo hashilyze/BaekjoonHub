@@ -35,13 +35,14 @@ public class Solution {
 		int min = Integer.MAX_VALUE;
 		int cntOddDay = sum;
 		int cntEvenDay = 0;
-		while(countDiffOdd <= cntOddDay) {
+		while(countDiffOdd <= cntOddDay && cntEvenDay <= cntOddDay + 1) {
 			int lastOddDay = cntOddDay * 2 - 1;
 			int lastEvenDay = cntEvenDay * 2;
 			min = Math.min(min, Math.max(lastOddDay, lastEvenDay));
 			cntOddDay -= 2;
 			cntEvenDay += 1;
-		}
+		} 
+		
 		return min;
 	}
 	
