@@ -10,34 +10,38 @@ public class Main {
 	// variables
 	static int N;
 	static int[] seq = new int[1_000];
-	static int[] result = new int[1_000];
 	
-	// val과 같거나 큰 원소중 가장 왼쪽 원소의 인덱스를 반환
-	static int lower_bound(int val, int[] arr, int beg, int end) {
-		int left = beg, right = end - 1;
-		while(left < right) {
-			int mid = (left + right) / 2;
+	
+	static int lower_bound(int val, int[] arr, int lo, int hi) {
+		while(lo < hi) {
+			int mid = (lo + hi) >> 1;
 			if(arr[mid] < val) {
-				left = mid + 1;
+				lo = mid + 1;
 			} else {
-				right = mid;
+				hi = mid;
 			}
 		}
-		return left;
+		return lo;
 	}
 	
-	static int solution() {
-		result[0] = seq[0];
+	static int getLISLength(int beg, int end) {
+		if(beg >= end) return 0;
+		
 		int size = 1;
-		for(int i = 1; i < N; ++i) {
-			if(result[size - 1] < seq[i]) {
-				result[size++] = seq[i];
+		int[] lis = new int[N]; lis[0] = seq[beg];
+		for(int i = beg + 1; i < end; ++i) {
+			if(lis[size - 1] < seq[i]) {
+				lis[size++] = seq[i];
 			} else {
-				int at = lower_bound(seq[i], result, 0, size);
-				result[at] = seq[i];
+				int at = lower_bound(seq[i], lis, 0, size - 1);
+				lis[at] = seq[i];
 			}
 		}
 		return size;
+	}
+	
+	static int solution() {
+		return getLISLength(0, N);
 	}
 	
 	public static void main(String[] args) throws IOException {
