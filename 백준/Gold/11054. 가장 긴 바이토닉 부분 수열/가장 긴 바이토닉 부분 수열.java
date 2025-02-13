@@ -10,6 +10,7 @@ public class Main {
 	// variables
 	static int N;
 	static int[] seq = new int[1_000];
+	static int[] buffer = new int[1_000];
 	
 	
 	static int lower_bound_asc(int val, int[] arr, int lo, int hi) {
@@ -40,15 +41,14 @@ public class Main {
 		if(beg >= end) return 0;
 		
 		int size = 0;
-		int[] lis = new int[N];
 		for(int i = beg; i < end; ++i) {
 			if(seq[i] >= limit) continue;
 			
-			if(size == 0 || lis[size - 1] < seq[i]) {
-				lis[size++] = seq[i];
+			if(size == 0 || buffer[size - 1] < seq[i]) {
+				buffer[size++] = seq[i];
 			} else {
-				int at = lower_bound_asc(seq[i], lis, 0, size - 1);
-				lis[at] = seq[i];
+				int at = lower_bound_asc(seq[i], buffer, 0, size - 1);
+				buffer[at] = seq[i];
 			}
 		}
 		return size;
@@ -58,15 +58,14 @@ public class Main {
 		if(beg >= end) return 0;
 		
 		int size = 0;
-		int[] lds = new int[N];
 		for(int i = beg; i < end; ++i) {
 			if(seq[i] >= limit) continue;
 			
-			if(size == 0 || lds[size - 1] > seq[i]) {
-				lds[size++] = seq[i];
+			if(size == 0 || buffer[size - 1] > seq[i]) {
+				buffer[size++] = seq[i];
 			} else {
-				int at = lower_bound_desc(seq[i], lds, 0, size - 1);
-				lds[at] = seq[i];
+				int at = lower_bound_desc(seq[i], buffer, 0, size - 1);
+				buffer[at] = seq[i];
 			}
 		}
 		return size;
