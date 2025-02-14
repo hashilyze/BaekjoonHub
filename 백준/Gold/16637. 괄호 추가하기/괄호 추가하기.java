@@ -28,36 +28,14 @@ public class Main {
 	}
 	
 	static int evalueate(List<Token> li) {
-		Deque<Integer> vStk = new ArrayDeque<>();
-		Deque<Character> opStk = new ArrayDeque<>();
-		if(li.get(0).num == 11) {
-			int a = 1;
+		int lhs = li.get(0).num;
+		for(int i = 1; i < li.size(); i += 2) {
+			char op = li.get(i).op;
+			int rhs = li.get(i + 1).num;
+			
+			lhs = calc(lhs, rhs, op);
 		}
-		
-		for(int i = 0; i < li.size(); ++i) {
-			Token token = li.get(i); 
-			if(token.isNumber()) {
-				vStk.offerLast(token.num);
-			} else {
-				while(!opStk.isEmpty()) {
-					int rhs = vStk.pollLast();
-					int lhs = vStk.pollLast();
-					char op = opStk.pollLast();
-					vStk.offerLast(calc(lhs, rhs, op));
-				}
-				opStk.offerLast(token.op);
-			}
-		}
-		while(!opStk.isEmpty()) {
-			int rhs = vStk.pollLast();
-			int lhs = vStk.pollLast();
-			char op = opStk.pollLast();
-			vStk.offerLast(calc(lhs, rhs, op));
-		}
-		if(vStk.peekLast() == 539) {
-			int a = 1;
-		}
-		return vStk.pollLast();
+		return lhs;
 	}
 	
 	static void nextSubset(int idx, String stmt, List<Token> li) {
