@@ -7,15 +7,10 @@ public class Main {
 	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 	static StringTokenizer st;	
 	// constants
-	static int MAX_N = 10;
 	// variables
 	static int N;
 	static String stmt;
 	static int result = Integer.MIN_VALUE;
-	
-	// N1 OP1 N2 OP2 N3 OP3 N4
-	// 가능한 경우의 수: |OP|!
-	// 동일한 위치에 OP가 둘 이상 저장되면, 뒤에 등장한 OP가 먼저 계산됨
 	
 	
 	static int calc(int lhs, int rhs, char op) {
@@ -24,53 +19,29 @@ public class Main {
 		case '-': return lhs - rhs;
 		case '*': return lhs * rhs;
 		}
-		return -1;
+		return 0;
 	}
 	
-	static int evalueate(List<Token> li) {
-		int lhs = li.get(0).num;
-		for(int i = 1; i < li.size(); i += 2) {
-			char op = li.get(i).op;
-			int rhs = li.get(i + 1).num;
-			
-			lhs = calc(lhs, rhs, op);
-		}
-		return lhs;
-	}
-	
-	static void nextSubset(int idx, String stmt, List<Token> li) {
-		if(idx == N) {
-			result = Math.max(result, evalueate(li));
+	static void nextSubset(int idx, String stmt, int leftNum, char leftOp) {
+		if(idx >= N) {
+			result = Math.max(result, leftNum);
 			return;
 		}
 		
-		// op이면 큐에 그대로 넣는다
-		// num이면 그대로 넣거나(1), 바로 오른쪽 수와 연산을 한 값을 저장한다.
-		char token = stmt.charAt(idx);
-		if(Character.isDigit(token)) {
-			li.add(new Token(token - '0'));
-			nextSubset(idx + 1, stmt, li);
-			li.remove(li.size() - 1);
-			
-			if(idx != N - 1) {
-				int value = calc(stmt.charAt(idx) - '0', stmt.charAt(idx + 2) - '0', stmt.charAt(idx + 1));
-				li.add(new Token(value));
-				nextSubset(idx + 3, stmt, li);
-				li.remove(li.size() - 1);
-			}
-		} else {
-			li.add(new Token(token));
-			nextSubset(idx + 1, stmt, li);
-			li.remove(li.size() - 1);
+		int num1 = stmt.charAt(idx) - '0';
+		nextSubset(idx + 2, stmt, calc(leftNum, num1, leftOp) , stmt.charAt(idx + 1));
+		if(idx != N - 1) {
+			int num2 = stmt.charAt(idx + 2) - '0';
+			int concat = calc(num1, num2, stmt.charAt(idx + 1));
+			nextSubset(idx + 4, stmt, calc(leftNum, concat, leftOp), stmt.charAt(idx + 3));
 		}
 	}
 	
 	public static void main(String[] args) throws IOException {
 		N = Integer.parseInt(br.readLine());
-		stmt =  br.readLine();
+		stmt =  br.readLine() + " ";
 		
-		List<Token> li = new ArrayList<>();
-		nextSubset(0, stmt, li);
+		nextSubset(0, stmt, 0, '+');
 		bw.append(""+result).flush();
 	}
 	
@@ -87,6 +58,7 @@ public class Main {
 		
 		boolean isOperator() {return !isNum; }
 		boolean isNumber() {return isNum; }
+		
 		@Override
 		public String toString() {
 			if(isNumber()) return "Token [num=" + num + "]";
