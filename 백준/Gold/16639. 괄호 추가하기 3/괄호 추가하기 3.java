@@ -10,68 +10,47 @@ public class Main {
 	// variables
 	static int N;
 	static String stmt;
-	
-	static int result = Integer.MIN_VALUE;
-	
-	
-	static int evaluate(List<Character> postStmt) {
-		Deque<Integer> vStk = new ArrayDeque<Integer>(postStmt.size());
-		for(char token : postStmt) {
-			if(Character.isDigit(token)) {
-				vStk.offerLast(token - '0');
-			} else {
-				int rhs = vStk.pollLast();
-				char op = token; 
-				int lhs = vStk.pollLast();
-				
-				int ret = -1;
-				switch(op) {
-				case '+': ret = lhs + rhs; break;
-				case '-': ret = lhs - rhs; break;
-				case '*': ret = lhs * rhs; break;
-				}
-				vStk.offerLast(ret);
-			}
-		}
-		return vStk.pollLast();
-	}
-	
-	// 후위표현식 생성
-	static void nextMonotone(int idx, int N, Deque<Character> stk, List<Character> postStmt) {
-		if(idx >= N) {
-			if(postStmt.size() == N) {
-				result = Math.max(result, evaluate(postStmt));
-			}
-			return;
-		}
-		
-		// 백트래킹
-		char ch = stmt.charAt(idx);
-		if(Character.isDigit(ch)) {
-			postStmt.add(ch);
-			// 연산자가 현재 위치에 배치될치 결정 
-			nextMonotone(idx + 1, N, stk, postStmt);
-			while(!stk.isEmpty()) {
-				postStmt.add(stk.pollLast());
-				nextMonotone(idx + 1, N, stk, postStmt);
-			}
-			while(!Character.isDigit(postStmt.get(postStmt.size() - 1))) {
-				stk.offerLast(postStmt.get(postStmt.size() - 1));
-				postStmt.remove(postStmt.size() - 1);
-			}
-			postStmt.remove(postStmt.size() - 1);
-		} else {
-			stk.offerLast(ch);
-			nextMonotone(idx + 1, N, stk, postStmt);
-			stk.pollLast();
-		}
-	}
+	static int[][] dpMax, dpMin;
 	
 	static int solution() {
-		Deque<Character> opStk = new ArrayDeque<Character>(N);
-		List<Character> postStmt = new ArrayList<Character>(N);
-		nextMonotone(0, N, opStk, postStmt);
-		return result;
+		dpMax = new int[N][N];
+		dpMin = new int[N][N];
+		for(int i = 0; i < N; ++i) Arrays.fill(dpMax[i], Integer.MIN_VALUE);
+		for(int i = 0; i < N; ++i) Arrays.fill(dpMin[i], Integer.MAX_VALUE);
+		
+		for(int i = 0; i < N; i += 2) {
+			dpMax[i][i] = dpMin[i][i] = stmt.charAt(i) - '0';
+		}
+		
+		for(int size = 3; size <= N; size += 2) {
+			for(int from = 0; from < N - size + 1; ++from) {
+				int to = from + size - 1;
+				for(int i = from + 1; i < to; i += 2) {
+					char op = stmt.charAt(i);
+					if(op == '+') {
+						// 최댓값 = 최댓값 + 최솟값
+						dpMax[from][to] = Math.max(dpMax[from][to], dpMax[from][i - 1] + dpMax[i + 1][to]); 
+						// 최솟값 = 최솟값 + 최솟값
+						dpMin[from][to] = Math.min(dpMin[from][to], dpMin[from][i - 1] + dpMin[i + 1][to]);
+					} else if(op == '-') { 
+						// 최댓값 = 최댓값 - 최솟값
+						dpMax[from][to] = Math.max(dpMax[from][to], dpMax[from][i - 1] - dpMin[i + 1][to]);
+						// 최솟값 = 최솟값 - 최댓값						
+						dpMin[from][to] = Math.min(dpMin[from][to], dpMin[from][i - 1] - dpMax[i + 1][to]);
+					} else { // op == '*' 
+						// 최댓값 = 최댓값 * 최댓값 or 최솟값 * 최솟값 
+						dpMax[from][to] = Math.max(dpMax[from][to], dpMax[from][i - 1] * dpMax[i + 1][to]);
+						dpMax[from][to] = Math.max(dpMax[from][to], dpMin[from][i - 1] * dpMin[i + 1][to]);
+						// 최솟값 = 최댓값 * 최솟값 or 최솟값 * 최댓값 or 최솟값 * 최솟값
+						dpMin[from][to] = Math.min(dpMin[from][to], dpMax[from][i - 1] * dpMin[i + 1][to]);
+						dpMin[from][to] = Math.min(dpMin[from][to], dpMin[from][i - 1] * dpMax[i + 1][to]);
+						dpMin[from][to] = Math.min(dpMin[from][to], dpMin[from][i - 1] * dpMin[i + 1][to]);
+					}
+				}
+				
+			}
+		}
+		return dpMax[0][N - 1];
 	}
 	
 	public static void main(String[] args) throws IOException {
