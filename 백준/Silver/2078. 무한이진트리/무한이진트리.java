@@ -13,15 +13,17 @@ public class Main {
 	
 	static int[] solution(int A, int B) {
 		int cntLeft = 0, cntRight = 0;
-		while(A != 1 || B != 1) {
+		while(A != 1 && B != 1) {
 			if(A < B) {
-				++cntRight;
-				B -= A;
+				cntRight += B / A;
+				B %= A;
 			} else {
-				++cntLeft;
-				A -= B;
+				cntLeft += A / B;
+				A %= B;
 			}
 		}
+		if(A > 1) cntLeft += A - 1;
+		else if(B > 1) cntRight += B - 1;
 		return new int[] {cntLeft, cntRight};
 	}
 	
