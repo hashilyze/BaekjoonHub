@@ -18,9 +18,10 @@ public class Main {
 		if(parents[u] == 0) return u;
 		return parents[u] = getId(parents[u]);
 	}
-	static void merge(int u, int v) {
+	static boolean merge(int u, int v) {
 		u = getId(u); 
 		v = getId(v);
+		if(u == v) return false;
 		
 		if(ranks[u] > ranks[v]) {
 			int tmp = u; u = v; v = tmp;
@@ -30,6 +31,7 @@ public class Main {
 		if(ranks[u] == ranks[v]) {
 			++ranks[u];
 		}
+		return true;
 	}
 	
 	
@@ -38,20 +40,17 @@ public class Main {
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
 		
-		int rm = 0, add = 0;
+		int cnt = 0;
 		for(int i = 0; i < M; ++i) {
 			st = new StringTokenizer(br.readLine());
 			int u = Integer.parseInt(st.nextToken());
 			int v = Integer.parseInt(st.nextToken());
-			if(getId(u) == getId(v)) { // 순환 간선은 연결하지 많음
-				++rm;
-			} else {
-				merge(u, v);
+			if(merge(u, v)) { // 순환 간선은 연결하지 많음
+				++cnt;
 			}
 		}
-		add = Math.max(0, (N - 1) - (M - rm)); // merge 횟수가 (N - 1)보다 작은 만큼 연결
-		
-		bw.append((rm + add) + "").flush();
+		cnt = (N - 1 - cnt) + (M - cnt);
+		bw.append(cnt + "").flush();
 	}
 }
 	
