@@ -10,25 +10,34 @@ public class Main {
 	static final int MOD = 1_000_000_007;
 	// variables
 	static int T;
+	static boolean[] isVowel = new boolean[128];
+	
 	
 	static int solution(String word) {
 		long result = 1;
 		
-		int indexPrevVowel = -1;
+		int prevVowel = -1;
 		for(int i = 0; i < word.length(); ++i) {
 			char ch = word.charAt(i);
-			if("aeiou".indexOf(ch) != -1) {
-				if(indexPrevVowel >= 0) {
-					result *= (i - indexPrevVowel);
+			if(isVowel[(int)ch]) {
+				if(prevVowel >= 0) {
+					result *= (i - prevVowel);
 					result %= MOD;
 				}
-				indexPrevVowel = i;
+				prevVowel = i;
 			}
 		}
-		return indexPrevVowel != -1 ? (int)result : -1;
+		return prevVowel != -1 ? (int)result : -1;
 	}
 	
 	public static void main(String[] args) throws IOException {
+		isVowel[(int)'a'] 
+			= isVowel[(int)'e'] 
+			= isVowel[(int)'i'] 
+			= isVowel[(int)'o']
+			= isVowel[(int)'u'] 
+			= true;
+		
 		T = Integer.parseInt(br.readLine());
 		while(T-- > 0) {
 			String word = br.readLine();
