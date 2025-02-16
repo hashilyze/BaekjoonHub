@@ -15,7 +15,7 @@ public class Main {
 	static long solution() {
 		long sum = 0;
 		for(int i = 0; i < N; ++i) {
-			sum += 1 + Math.max(0, (A[i] - B + (C - 1)) / C);
+			sum += 1 + (Math.max(0, A[i] - B) + (C - 1)) / C;
 		}
 		return sum;
 	}
