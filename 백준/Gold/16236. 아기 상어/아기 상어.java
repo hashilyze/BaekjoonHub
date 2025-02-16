@@ -7,7 +7,7 @@ public class Main {
 	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 	static StringTokenizer st = null;
 	// types
-	static class Vector{
+	static class Vector implements Comparable<Vector>{
 		int y, x;
 		int dist;
 		
@@ -16,6 +16,13 @@ public class Main {
 			this.y = y;
 			this.x = x;
 			this.dist = dist;
+		}
+		
+		@Override
+		public int compareTo(Vector o) {
+			if(this.dist != o.dist) return this.dist - o.dist;
+			else if(this.y != o.y) return this.y - o.y;
+			return this.x - o.x;
 		}
 	}
 	// constants
@@ -35,41 +42,29 @@ public class Main {
 	static Vector findFish(int ay, int ax, int lv) {
 		boolean[][] isVisited = new boolean[N][N];
 		
-		Deque<Vector> q = new ArrayDeque<Vector>();
+		Queue<Vector> q = new PriorityQueue<Vector>();
 		q.add(new Vector (ay, ax, 0));
-		List<Vector> li = new ArrayList<Vector>();
 		
 		while(!q.isEmpty()) {
-			Vector u = q.pollFirst();
+			Vector u = q.poll();
 			int y = u.y, x = u.x, dist = u.dist; 
 
 			if(isVisited[y][x]) continue;
 			isVisited[y][x] = true;
-			if(!li.isEmpty() && li.get(0).dist < dist) continue; // short-check
 			
 			if(0 < mat[y][x] && mat[y][x] < lv) { // 크기가 작은 물고기만 먹음
-				li.add(u);
+				return u;
 			} else if(mat[y][x] == 0 || mat[y][x] == lv) { // 빈칸과 같은 크기는 지나감
 				for(int d = 0; d < DELTA.length; ++d) {
 					int ny = y + DELTA[d][1];
 					int nx = x + DELTA[d][0];
 					if(isInOfRange(ny, nx)) {
-						q.add(new Vector(ny, nx, dist + 1));
+						q.offer(new Vector(ny, nx, dist + 1));
 					}
 				}
 			}
 		}
-		
-		if(li.isEmpty()) {
-			return null;
-		} else {
-			li.sort((lhs, rhs)->{
-				if(lhs.dist != rhs.dist) return lhs.dist - rhs.dist;
-				else if(lhs.y != rhs.y) return lhs.y - rhs.y;
-				return lhs.x - rhs.x;
-			});
-			return li.get(0);
-		}
+		return null;
 	}
 	
 	static int solution() {
