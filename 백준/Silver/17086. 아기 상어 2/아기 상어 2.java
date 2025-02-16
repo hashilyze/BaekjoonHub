@@ -16,50 +16,33 @@ public class Main {
 	// variables
 	static int N, M;
 	static int[][] mat;
+	static List<int[]> src = new ArrayList<int[]>();
 	
 	
 	static boolean isInOfRange(int y, int x) {
 		return 0 <= y && y < N && 0 <= x && x < M;
 	}
 	
-	static int[] findShark(int ay, int ax) {
-		boolean[][] isVisited = new boolean[N][M];
-		
+	static int solution() {
+		int max = 1;
 		Deque<int[]> q = new ArrayDeque<int[]>();
-		q.offerLast(new int[] {ax, ay});
+		for(int[] s : src) q.offerLast(s);
+		
 		while(!q.isEmpty()) {
 			int[] u = q.pollFirst();
 			int y = u[1], x = u[0];
 			
-			if(isVisited[y][x]) continue;
-			isVisited[y][x] = true;
-			
-			if(mat[y][x] == 1) return new int[] {x, y};
-			
 			for(int d = 0; d < DELTA.length; ++d) {
 				int ny = y + DELTA[d][1];
 				int nx = x + DELTA[d][0];
-				if(isInOfRange(ny, nx)) {
+				if(isInOfRange(ny, nx) && mat[ny][nx] == 0) {
+					mat[ny][nx] = mat[y][x] + 1;
+					max = Math.max(max, mat[ny][nx]);
 					q.offerLast(new int[] {nx, ny});
 				}
 			}
 		}
-		return null;
-	}
-	
-	static int solution() {
-		int max = 0;
-		for(int y = 0; y < N; ++y) {
-			for(int x = 0; x < M; ++x) {
-				if(mat[y][x] == 1) continue;
-				
-				int[] pos = findShark(y, x);
-				int dy = Math.abs(pos[1] - y);
-				int dx = Math.abs(pos[0] - x);
-				max = Math.max(max, Math.abs(dy - dx) + Math.min(dy, dx));
-			}
-		}
-		return max;
+		return max - 1;
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -71,7 +54,10 @@ public class Main {
 		for(int y = 0; y < N; ++y) {
 			st = new StringTokenizer(br.readLine());
 			for(int x = 0; x < M; ++x) {
-				mat[y][x] = Integer.parseInt(st.nextToken());
+				int v = Integer.parseInt(st.nextToken());
+				if((mat[y][x] = v) == 1) {
+					src.add(new int[] {x, y});
+				}
 			}
 		}
 		bw.append(solution()+"").flush();
