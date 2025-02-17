@@ -20,18 +20,18 @@ public class Main {
 		return lo;
 	}
 	
-	static int getLISLength() {
+	static int getLDSLength() {
 		int size = 0;
-		int[] lis = new int[N];
+		int[] lds = new int[N];
 		for(int i = 0; i < N; ++i) {
-			int at = lower_bound(arr[i], lis, 0, size);
-			lis[at] = arr[i];
+			int at = lower_bound(arr[i], lds, 0, size);
+			lds[at] = arr[i];
 			if(at == size) ++size;
 		}
 		return size;
 	}
 	static int solution() {
-		return N - getLISLength();
+		return N - getLDSLength();
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -44,4 +44,5 @@ public class Main {
 		}
 		bw.append(solution()+"").flush();
 	}
+
 }
