@@ -7,12 +7,14 @@ public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));	
 	
-	static char[][] mat;
-	static int[][] DELTA = {
-			                  {2, -2},
-                     {1, -1},          {3, -1},
-			{0,  0}, {1,  0}, {2,  0}, {3,  0}, {4,  0},	
+	
+	static final int[][] DELTA = {
+	            		 {2, -2},
+	            {1, -1},          {3, -1},
+	   {0,  0}, {1,  0}, {2,  0}, {3,  0}, {4,  0},	
 	};
+	static char[][] mat;
+	
 	
 	static void makeStar(int ay, int ax, int m) {
 		if(m == 3) {
@@ -22,11 +24,12 @@ public class Main {
 			return;
 		}
 		
-		int nm = m >> 1;
-		makeStar(ay, ax, nm);
-		makeStar(ay, ax + m, nm);
-		makeStar(ay - (m >> 1), ax + (m >> 1), nm);
+		int half = m >> 1;
+		makeStar(ay, ax, half);
+		makeStar(ay, ax + m, half);
+		makeStar(ay - half, ax + half, half);
 	}
+	
 	
 	public static void main(String[] args) throws IOException {
 		int N = Integer.parseInt(br.readLine());
