@@ -1,6 +1,4 @@
-#include <iostream>
-#include <algorithm>
-#include <cstring>
+#include <bits/stdc++.h>
 
 // macros
 #define FASTIO std::ios::sync_with_stdio(0); std::cin.tie(0);
@@ -13,47 +11,21 @@ int parents[MAX_N + 1];
 int lefts[MAX_N + 1];
 int rights[MAX_N + 1];
 
-int cnt = 0;
-
-int getMinNode(int node) {
-	while (lefts[node] > 0) {
-		node = lefts[node];
-		++cnt;
-	}
-	return node;
-}
-
-int getNextNode(int node) { 
-	if (rights[node] > 0) { // next 노드가 오른쪽 자식 중에 존재
-		++cnt;
-		return getMinNode(rights[node]);
-	} else { // next 노드가 조상 중에 존재(할 것으로 추정)
-		int tmp = 1;
-		int parent = parents[node];
-		while (parent > 0 && node != lefts[parent]) {
-			node = parent;
-			parent = parents[parent];
-			++tmp;
-		}
-		if (parent == 0) {
-			return -1;
-		}
-		cnt += tmp;
-		return parent;
-	}
-}
 
 int solution() {
-	int node = getMinNode(ROOT);
-	while ((node = getNextNode(node)) > 0) {
-		continue;
+	int noback = 0;
+	int node = ROOT;
+	while (rights[node] > 0) {
+		node = rights[node];
+		++noback;
 	}
-	return cnt;
+	return 2 * (N - 1) - noback;
 }
+
 
 int main() {
 	FASTIO
-		;
+		
 	std::cin >> N;
 	for (int i = 0; i < N; ++i) {
 		int c, l, r;
