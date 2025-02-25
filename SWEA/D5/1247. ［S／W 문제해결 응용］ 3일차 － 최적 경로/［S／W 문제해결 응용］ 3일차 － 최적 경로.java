@@ -16,8 +16,6 @@ public class Solution {
 	
 	
 	static void minPath(int at, int sum, int isVisited) {
-		if(sum >= min) return;
-		
 		if(isVisited == (0x01 << N) - 1) {
 			min = Math.min(min, sum + weights[at][DEST]);
 			return;
