@@ -25,7 +25,7 @@ public class Main {
 	
 	
 	static int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
-	static List<Token> exp = new ArrayList<>();
+	static List<Token> exp = new ArrayList<>(2 * MAX_N - 1);
 	
 	
 	static int calc(int lhs, int rhs, char op) {
