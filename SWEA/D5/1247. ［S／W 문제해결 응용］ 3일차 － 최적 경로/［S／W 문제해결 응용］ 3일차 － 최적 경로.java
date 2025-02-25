@@ -13,35 +13,26 @@ public class Solution {
 	static int N;
 	static int[][] locations = new int[MAX_N][2];
 	static int[][] weights = new int[MAX_N][MAX_N];
-	static int[][][] dp = new int[MAX_N][MAX_N][0x01 << MAX_N]; // dp[from][to][passed]; 
+	static int[][] dp = new int[MAX_N][0x01 << MAX_N]; // dp[from][to][passed]; 
 	
 	
-	static int minPath(int from, int to, int passed) {
-		int cached = dp[from][to][passed]; 
-		if(cached >= 0) return cached; 
-		
-		if(from == to) {
-			return dp[from][to][passed] = (passed == 0 ? 0 : INF);
-		} else if(passed == 0) {
-			return dp[from][to][passed] = weights[from][to];
+	static int minPath(int from, int isVisited) {
+		if(isVisited == (0x01 << N) - 1) {
+			return weights[from][DEST];
 		}
+		if(dp[from][isVisited] >= 0) return dp[from][isVisited]; 
 		
 		int min = Integer.MAX_VALUE;
-		for(int u = 0; u < N; ++u) {
-			if((passed & (0x01 << u)) == 0) continue;
-			for(int v = 0; v < N; ++v) {
-				if((passed & (0x01 << v)) == 0) continue;
-				min = Math.min(min, minPath(u, v, passed ^ ((0x01 << u) | (0x01 << v))) + weights[from][u] + weights[v][to]);
-			}
+		for(int to = 0; to < N; ++to) {
+			if(((isVisited >> to) & 1) == 1) continue;
+			min = Math.min(min, weights[from][to] + minPath(to, isVisited | (0x01 << to)));
 		}
-		return dp[from][to][passed] = min;
+		return dp[from][isVisited] = min;
 	}
 	
 	static void initDp() {
 		for(int from = 0; from < N; ++from) {
-			for(int to = 0; to < N; ++to) {
-				Arrays.fill(dp[from][to], -1);
-			}
+			Arrays.fill(dp[from], -1);
 		}
 	}
 	static void initWeight() {
@@ -56,7 +47,7 @@ public class Solution {
 	static int solution() {
 		initDp();
 		initWeight();
-		return minPath(SRC, DEST, ((0x01 << N) - 1) ^ ((0x01 << SRC) | (0x01 << DEST)));
+		return minPath(SRC, 0x03);
 	}
 	
 	public static void main(String[] args) throws IOException {
