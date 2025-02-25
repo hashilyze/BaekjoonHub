@@ -6,38 +6,57 @@ public class Solution {
 	static StringBuilder sb = new StringBuilder();
 	static StringTokenizer st;
 	
+	static final int INF = Integer.MAX_VALUE >> 2;
 	static final int MAX_N = 10 + 2;
 	static final int SRC = 0, DEST = 1;
 	
 	static int N;
 	static int[][] locations = new int[MAX_N][2];
 	static int[][] weights = new int[MAX_N][MAX_N];
-	static int min;
+	static int[][][] dp = new int[MAX_N][MAX_N][0x01 << MAX_N]; // dp[from][to][passed]; 
 	
 	
-	static void minPath(int at, int sum, int isVisited) {
-		if(isVisited == (0x01 << N) - 1) {
-			min = Math.min(min, sum + weights[at][DEST]);
-			return;
+	static int minPath(int from, int to, int passed) {
+		int cached = dp[from][to][passed]; 
+		if(cached >= 0) return cached; 
+		
+		if(from == to) {
+			return dp[from][to][passed] = (passed == 0 ? 0 : INF);
+		} else if(passed == 0) {
+			return dp[from][to][passed] = weights[from][to];
 		}
 		
-		for(int i = 2; i < N; ++i) {
-			if(((isVisited >> i) & 1) == 1) continue;
-			
-			int w = sum + weights[at][i];
-			if(w < min) minPath(i, w, isVisited | (0x01 << i));
+		int min = Integer.MAX_VALUE;
+		for(int u = 0; u < N; ++u) {
+			if((passed & (0x01 << u)) == 0) continue;
+			for(int v = 0; v < N; ++v) {
+				if((passed & (0x01 << v)) == 0) continue;
+				min = Math.min(min, minPath(u, v, passed ^ ((0x01 << u) | (0x01 << v))) + weights[from][u] + weights[v][to]);
+			}
 		}
+		return dp[from][to][passed] = min;
 	}
 	
-	static int solution() {
-		min = Integer.MAX_VALUE;
+	static void initDp() {
+		for(int from = 0; from < N; ++from) {
+			for(int to = 0; to < N; ++to) {
+				Arrays.fill(dp[from][to], -1);
+			}
+		}
+	}
+	static void initWeight() {
 		for(int i = 0; i < N; ++i) {
 			for(int j = i; j < N; ++j) {
 				weights[i][j] = weights[j][i] = Math.abs(locations[i][0] - locations[j][0]) + Math.abs(locations[i][1] - locations[j][1]);
 			} 
+			weights[i][i] = INF;
 		}
-		minPath(SRC, 0, 0x03);
-		return min;
+	}
+	
+	static int solution() {
+		initDp();
+		initWeight();
+		return minPath(SRC, DEST, ((0x01 << N) - 1) ^ ((0x01 << SRC) | (0x01 << DEST)));
 	}
 	
 	public static void main(String[] args) throws IOException {
