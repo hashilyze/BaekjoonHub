@@ -1,0 +1,21 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+	// Input Handler
+	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	static StringBuilder sb = new StringBuilder();
+	static StringTokenizer st;
+
+	
+	public static void main(String[] args) throws IOException {
+		st = new StringTokenizer(br.readLine());
+		
+		int x = Integer.parseInt(st.nextToken());
+		int y = Integer.parseInt(st.nextToken());
+		int w = Integer.parseInt(st.nextToken());
+		int h = Integer.parseInt(st.nextToken());
+		
+		System.out.println(Math.min(Math.min(x, w - x), Math.min(y, h - y)));
+	}
+}
