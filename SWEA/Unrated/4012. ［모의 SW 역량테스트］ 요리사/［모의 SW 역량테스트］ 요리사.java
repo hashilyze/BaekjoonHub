@@ -8,37 +8,44 @@ public class Solution {
 	
 	static int N, B;
 	static int[][] mat = new int[16][16];
+	static int[] slotA = new int[8], slotB = new int[8];
 	
+	static int min;
 	
 	static int diff(int bitMask) {
-		int a = 0, b = 0;
+		int curA = 0, curB = 0;
 		for(int i = 0; i < N; ++i) {
-			for(int j = i + 1; j < N; ++j) {
-				if(((bitMask >> i) & 1) == ((bitMask >> j) & 1)) {
-					if(((bitMask >> i) & 1) == 1) a += mat[i][j] + mat[j][i];
-					else b += mat[i][j] + mat[j][i];
-				}
+			if(((bitMask >> i) & 1) == 1){
+				slotA[curA++] = i;
+			} else {
+				slotB[curB++] = i;
+			}
+		}
+		
+		int halfN = N >> 1;
+		int a = 0, b = 0;
+		for(int i = 0; i < halfN; ++i) {
+			for(int j = i + 1; j < halfN; ++j) {
+				a += mat[slotA[i]][slotA[j]] + mat[slotA[j]][slotA[i]];
+				b += mat[slotB[i]][slotB[j]] + mat[slotB[j]][slotB[i]];
 			}
 		}
 		return Math.abs(a - b);
 	}
 	
-	static boolean isValid(int bitMask) {
-		int cnt = 0;
-		while(bitMask > 0) {
-			bitMask -= (bitMask & -bitMask);
-			++cnt;
+	static void nextCombination(int idx, int left, int bitMask) {
+		if(left == 0) {
+			min = Math.min(min, diff(bitMask));
+			return;
 		}
-		return (cnt << 1) == N;
+		for(int i = idx; i < N - left + 1; ++i) {
+			nextCombination(i + 1, left - 1, bitMask | (0x01 << i));
+		}
 	}
 	
 	static int solution() {
-		int min = Integer.MAX_VALUE;
-		for(int bitMask = 0, limit = 0x01 << N; bitMask < limit; ++bitMask) {
-			if(isValid(bitMask)) {
-				min = Math.min(min, diff(bitMask));
-			}
-		}
+		min = Integer.MAX_VALUE;
+		nextCombination(1, (N >> 1) - 1, 0x01);
 		return min;
 	}
 	
