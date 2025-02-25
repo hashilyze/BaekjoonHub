@@ -7,7 +7,7 @@ public class Main {
 	static StringBuilder sb = new StringBuilder();
 	static StringTokenizer st;
 	
-	static final int INF = Integer.MAX_VALUE >> 1;
+	static final int INF = Integer.MAX_VALUE >> 2;
 	static final int MAX_N = 16;
 	static final int SRC = 0;
 	
