@@ -4,54 +4,41 @@ import java.util.*;
 
 public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-	static StringTokenizer st = null;
+	static StringBuilder sb = new StringBuilder();
+	static StringTokenizer st;
 	
+	static final int INF = Integer.MAX_VALUE >> 1;
 	static final int MAX_N = 16;
-	static final int INF = 1_000_000 * MAX_N + 1;
+	static final int SRC = 0;
 	
 	static int N;
-	static int[][] adj = new int[MAX_N][MAX_N];
-	static int[][][] dp = new int[MAX_N][MAX_N][0x01 << MAX_N];
-
+	static int[][] weights = new int[MAX_N][MAX_N];
+	static int[][] dp = new int[MAX_N][0x01 << MAX_N]; 
 	
-	static int minWeight(int from, int to, int passed) {
-		if(dp[from][to][passed] > 0) 
-			return dp[from][to][passed];
+	
+	static int minPath(int from, int isVisited) {
+		if(isVisited == (0x01 << N) - 1) {
+			return weights[from][SRC];
+		}
+		if(dp[from][isVisited] >= 0) return dp[from][isVisited]; 
 		
 		int min = INF;
-		if(passed == 0) {
-			min = from == to ? 0 : adj[from][to];
-		} else if(from != to) {
-			for(int u = 0; u < N; ++u) {
-				if((passed & (0x01 << u)) == 0) continue;
-				
-				for(int v = 0; v < N; ++v) {
-					if((passed & (0x01 << v)) == 0) continue;
-					
-					min = Math.min(min, minWeight(u, v, passed ^ (0x01 << u | 0x01 << v)) + adj[from][u] + adj[v][to]);
-				}
-			}
+		for(int to = 0; to < N; ++to) {
+			if(((isVisited >> to) & 1) == 1 || weights[from][to] == INF) continue;
+			min = Math.min(min, weights[from][to] + minPath(to, isVisited | (0x01 << to)));
 		}
-		return dp[from][to][passed] = min;
+		return dp[from][isVisited] = min;
 	}
 	
+	static void initDp() {
+		for(int from = 0; from < N; ++from) {
+			Arrays.fill(dp[from], -1);
+		}
+	}
 	
 	static int solution() {
-		for(int u = 0; u < N; ++u) {
-			for(int v = 0; v < N; ++v) {
-				Arrays.fill(dp[u][v], -1);
-			}
-		}
-		
-		int min = INF;
-		int u = 0;
-		for(int v = 1; v < N; ++v) {
-			int passed = (0x01 << N) - 1;
-			passed ^= (0x01 << u | 0x01 << v);
-			min = Math.min(min, minWeight(u, v, passed) + adj[v][u]);
-		}
-		return min;
+		initDp();
+		return minPath(SRC, 0x01);
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -59,10 +46,10 @@ public class Main {
 		for(int u = 0; u < N; ++u) {
 			st = new StringTokenizer(br.readLine());
 			for(int v = 0; v < N; ++v) {
-				int w = Integer.parseInt(st.nextToken());
-				if((adj[u][v] = w) == 0) adj[u][v] = INF; 
+				weights[u][v] = Integer.parseInt(st.nextToken());
+				if(weights[u][v] == 0) weights[u][v] = INF;
 			}
 		}
-		bw.append("" + solution()).flush();
+		System.out.print(solution());
 	}
 }
