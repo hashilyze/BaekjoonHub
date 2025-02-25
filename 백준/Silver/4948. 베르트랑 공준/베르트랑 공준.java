@@ -24,11 +24,11 @@ public class Main {
 	}
 	
 	static int solution(int N) {
-		int cnt = 0;
-		for(int p : primes) {
-			if(N < p && p <= 2 * N) ++cnt;
-		}
-		return cnt;
+		int beg = lower_bound(N);
+		if(primes.get(beg) == N) ++beg;
+		int end = lower_bound(N << 1);
+		if(primes.get(end) == N << 1) ++end;
+		return end - beg;
 	}
 	
 	static void initEuler() {
