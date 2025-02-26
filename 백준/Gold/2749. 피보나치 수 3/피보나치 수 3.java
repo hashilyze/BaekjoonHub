@@ -9,6 +9,8 @@ public class Main {
 	
 	static final int MOD = 1_000_000;
 	static final int[][] UNIT = new int[][] {{1, 1}, {1, 0}};
+	static final int[][] BASE = new int[][] {{1, 1}, {1, 0}};
+	
 	
 	
 	static int[][] product(int[][] lhs, int[][] rhs){
@@ -24,14 +26,15 @@ public class Main {
 	}
 	
 	static int[][] pow(long n){
-		if(n == 1) 
-			return UNIT;
-		
-		int[][] ret;
-		
-		int[][] half = pow(n >> 1);
-		ret = product(half, half);
-		if(n % 2 == 1) ret = product(ret, UNIT);
+		int[][] ret = new int[][] {{1, 0}, {0, 1}};
+		int[][] tmp = BASE;
+		while(n > 0L) {
+			if((n & 1) == 1) {
+				ret = product(ret, tmp);
+			}
+			n >>= 1;
+			tmp = product(tmp, tmp);
+		}
 		return ret;
 	}
 	
