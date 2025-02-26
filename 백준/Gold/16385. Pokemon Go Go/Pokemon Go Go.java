@@ -7,16 +7,17 @@ public class Main {
 	static StringTokenizer st;
 	
 	
-	static final int MAX_N = 20 + 1;
-	static final int START = 0;
-	static final int INF = 200 * MAX_N;
+	static final int MAX_N = 20 + 1; // 포켓몬의 최대 개수
+	static final int MAX_M = 15 + 1; // 고유한 포켓몬의 최대 개수
+	static final int START = 0; // 원점의 인덱스
+	static final int INF = 200 * MAX_M;
 	
 	static int N, M;
 	static int[][] locations = new int[MAX_N][2]; // 위치
 	static int[] indecies = new int[MAX_N];
 	
 	static int[][] adj = new int[MAX_N][MAX_N]; // 간선
-	static int[][] dp = new int[MAX_N][0x01 << MAX_N];
+	static int[][] dp = new int[MAX_N][0x01 << MAX_M];
 	
 	
 	
