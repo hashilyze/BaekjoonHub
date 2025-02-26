@@ -2,41 +2,41 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+	// Input Handler
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder sb = new StringBuilder();
 	static StringTokenizer st;
 	
-	static final int MOD = 1_000_000_007;
+	static final long MOD = 1_000_000_007;
+	static long N, K;
 	
-	static int N, K;
 	
-	static int pow(int b, int e) {
-		if(e == 0) return 1; // 기저
-		
-		long half = pow(b, e >> 1);
-		long ret = (half * half) % MOD;
-		if((e & 1) == 1) {
-			ret = (ret * b) % MOD;
+	static long flt(long n, long m) {
+		long r = 1;
+		long b = n;
+		long e = m - 2;
+		while(e > 0) {
+			if((e & 1) == 1) r = (r * b) % m;
+			b = (b * b) % m;
+			e >>= 1;
 		}
-		return (int)ret;
+		return r;
 	}
-	static int inv(int n) { return pow(n, MOD - 2); }
 	
-	static int solution() {
+	static long solution() {
 		long a = 1, b = 1;
-		for(int i = 0; i < K; ++i) {
+		K = Math.min(K, N - K);
+		for(long i = 0; i < K; ++i) {
 			a = (a * (N - i)) % MOD;
 			b = (b * (K - i)) % MOD;
 		}
-		return (int)(a * inv((int)b) % MOD);
+		return a * flt(b, MOD) % MOD;
 	}
 	
-	public static void main(String[] args) throws IOException{
+	public static void main(String[] args) throws IOException {
 		st = new StringTokenizer(br.readLine());
-		N = Integer.parseInt(st.nextToken());
-		K = Integer.parseInt(st.nextToken());
-		
-		System.out.println(solution());
+		N = Long.parseLong(st.nextToken());
+		K = Long.parseLong(st.nextToken());
+		System.out.print(solution());
 	}
-
 }
