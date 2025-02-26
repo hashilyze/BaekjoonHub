@@ -44,9 +44,7 @@ public class Solution {
         	N = sc.nextInt();
         	for(int i = 0; i < N; ++i) H[i] = sc.nextInt();
         	
-        	sb.append("#").append(t).append(" ").append(solution()).append("\n");
-        }
-        System.out.print(sb);
-        
+        	System.out.println("#" + t + " " + solution());
+        }        
     }
 }
