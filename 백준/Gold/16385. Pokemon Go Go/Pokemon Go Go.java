@@ -6,14 +6,14 @@ public class Main {
 	static StringBuilder sb = new StringBuilder();
 	static StringTokenizer st;
 	
+	
 	static final int MAX_N = 20 + 1;
 	static final int START = 0;
 	static final int INF = 200 * MAX_N;
 	
-	static int N;
+	static int N, M;
 	static int[][] locations = new int[MAX_N][2]; // 위치
-	static String[] names = new String[MAX_N]; // 이름
-	static Map<String, Integer> bitMasks = new HashMap<>(); // 이름에 대응하는 isVisited 비트마스크
+	static int[] indecies = new int[MAX_N];
 	
 	static int[][] adj = new int[MAX_N][MAX_N]; // 간선
 	static int[][] dp = new int[MAX_N][0x01 << MAX_N];
@@ -28,14 +28,14 @@ public class Main {
 		int cached = dp[at][isVisited];
 		if(dp[at][isVisited] > 0) return cached;
 		
-		if(isVisited == (0x01 << N + 1) - 1) { // 기저
+		if(isVisited == (0x01 << M + 1) - 1) { // 기저
 			return dp[at][isVisited] = adj[at][START];
 		}
 		
 		int min = INF;
 		for(int i = 1; i <= N; ++i) {
-			if(((isVisited >> i) & 1) == 1) continue;
-			min = Math.min(min, minPath(i, isVisited | bitMasks.get(names[i])) + adj[at][i]);
+			if(((isVisited >> indecies[i]) & 1) == 1) continue;
+			min = Math.min(min, minPath(i, isVisited | (0x01 << indecies[i])) + adj[at][i]);
 		}
 		return dp[at][isVisited] = min;
 	}
@@ -46,12 +46,20 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException{
 		N = Integer.parseInt(br.readLine());
+		
+		Map<String, Integer> name2Index = new HashMap<>();
 		for(int i = 1; i <= N; ++i) {
 			st = new StringTokenizer(br.readLine());
 			locations[i][0] = Integer.parseInt(st.nextToken());
 			locations[i][1] = Integer.parseInt(st.nextToken());
-			names[i] = st.nextToken();
+			
+			String name = st.nextToken();
+			if(!name2Index.containsKey(name)) {
+				name2Index.put(name, name2Index.size() + 1);
+			}
+			indecies[i] = name2Index.get(name);
 		}
+		M = name2Index.size();
 		
 		// 간선 가중치 생성
 		for(int u = 0; u <= N; ++u) {
@@ -59,17 +67,8 @@ public class Main {
 				adj[u][v] = adj[v][u] = manhattanDistance(locations[u], locations[v]);
 			}
 		}
-		// 비트마스크 생성
-		for(int i = 1; i <= N; ++i) {
-			String name = names[i];
-			int base = 0x00;
-			if(bitMasks.containsKey(name)) {
-				base = bitMasks.get(name);
-			}
-			bitMasks.put(name, base | (0x01 << i));
-		}
 		
-		System.out.println(solution());;
+		System.out.println(solution());
 	}
 
 }
