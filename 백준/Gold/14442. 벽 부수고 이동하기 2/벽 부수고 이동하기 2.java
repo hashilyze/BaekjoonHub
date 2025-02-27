@@ -6,7 +6,7 @@ public class Main {
 	static StringBuilder sb = new StringBuilder();
 	static StringTokenizer st;
 	
-	static final int MAX_N = 1_000, MAX_M = 1_000, MAX_K = 10;
+	static final int MAX_N = 1000, MAX_M = 1000, MAX_K = 10;
 	static final int[][] DELTA = {
 			{ 1,  0},
 			{-1,  0}, 
@@ -15,9 +15,8 @@ public class Main {
 	};
 	
 	static int N, M, K;
-	static boolean[][] isBlocked = new boolean[MAX_N][MAX_M];
+	static char[][] isBlocked = new char[MAX_N][];
 	static int[][][] isVisited = new int[MAX_K + 1][MAX_N][MAX_M];
-	static int min = Integer.MAX_VALUE;
 	
 	
 	static boolean isInOfRange(int y, int x) { return 0 <= y && y < N && 0 <= x && x < M; }
@@ -36,12 +35,11 @@ public class Main {
 			for(int i = 0; i < DELTA.length; ++i) {
 				int nx = x + DELTA[i][0];
 				int ny = y + DELTA[i][1];
-				
+					
 				if(isInOfRange(ny, nx)) {
-					if(!isBlocked[ny][nx] && isVisited[z][ny][nx] == 0) { // 빈공간
+					if(isBlocked[ny][nx] == '0' && isVisited[z][ny][nx] == 0) { // 빈공간
 						isVisited[z][ny][nx] = isVisited[z][y][x] + 1;
-						if(ny == N - 1 && nx == M - 1) 
-							return isVisited[z][ny][nx];
+						if(ny == N - 1 && nx == M - 1) return isVisited[z][ny][nx]; // 도착점은 항상 빈칸
 						q.offerLast(new int[] {nx, ny, z});
 					} else if(z < K && isVisited[z + 1][ny][nx] == 0) { // 벽을 통과할 수 있는 횟수가 남음
 						isVisited[z + 1][ny][nx] = isVisited[z][y][x] + 1;
@@ -60,12 +58,8 @@ public class Main {
 		K = Integer.parseInt(st.nextToken());
 		
 		for(int i = 0; i < N; ++i) {
-			String row = br.readLine();
-			for(int j = 0; j < M; ++j) {
-				isBlocked[i][j] = row.charAt(j) == '1';
-			}
+			isBlocked[i] = br.readLine().toCharArray(); 
 		}
 		System.out.print(solution());
 	}
-
 }
