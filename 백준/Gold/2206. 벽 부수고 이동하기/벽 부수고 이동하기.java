@@ -15,7 +15,7 @@ public class Main {
 	};
 	
 	static int N, M;
-	static boolean[][] isBlocked = new boolean[MAX_N][MAX_N];
+	static char[][] isBlocked = new char[MAX_N][];
 	static int[][][] isVisited = new int[2][MAX_N][MAX_N];
 	static int min = Integer.MAX_VALUE;
 	
@@ -37,12 +37,12 @@ public class Main {
 				int nx = x + DELTA[i][0];
 				int ny = y + DELTA[i][1];
 				
-				if(isInOfRange(ny, nx) && isVisited[z][ny][nx] == 0) {
-					if(!isBlocked[ny][nx]) { // 빈공간
+				if(isInOfRange(ny, nx)) {
+					if(isBlocked[ny][nx] == '0' && isVisited[z][ny][nx] == 0) { // 빈공간
 						isVisited[z][ny][nx] = isVisited[z][y][x] + 1;
 						if(ny == N - 1 && nx == M - 1) return isVisited[z][ny][nx]; // 도착점은 항상 빈칸
 						q.offerLast(new int[] {nx, ny, z});
-					} else if(z < 1) { // 벽을 통과할 수 있는 횟수가 남음
+					} else if(z < 1 && isVisited[z + 1][ny][nx] == 0) { // 벽을 통과할 수 있는 횟수가 남음
 						isVisited[z + 1][ny][nx] = isVisited[z][y][x] + 1;
 						q.offerLast(new int[] {nx, ny, z + 1});
 					}
@@ -58,10 +58,7 @@ public class Main {
 		M = Integer.parseInt(st.nextToken());
 		
 		for(int i = 0; i < N; ++i) {
-			String row = br.readLine();
-			for(int j = 0; j < M; ++j) {
-				isBlocked[i][j] = row.charAt(j) == '1';
-			}
+			isBlocked[i] = br.readLine().toCharArray(); 
 		}
 		System.out.print(solution());
 	}
