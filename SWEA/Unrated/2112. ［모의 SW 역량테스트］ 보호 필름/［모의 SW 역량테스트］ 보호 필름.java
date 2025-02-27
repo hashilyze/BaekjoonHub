@@ -6,36 +6,21 @@ public class Solution {
 	static StringBuilder sb = new StringBuilder();
 	static StringTokenizer st = null;
 	
-	static final int A = 0x00;
-	static final int B = (int)((0x01L << 32) - 1);
+	static final int A = 0x00; // A로만 이루어진 단층
+	static final int B = (int)((0x01L << 32) - 1); // B로만 구성된 단층
 	
 	static int D, W, K;
-	static int[] cells = new int[13];
+	static int[] firms = new int[13];
 	static int min;
-	
-	static void toggle(int bitMask) {
-		for(int i = 0; i < D; ++i) {
-			if((bitMask & (0x01 << i)) == 1) {
-				cells[i] = ~cells[i];
-			}
-		}
-	}
-	
-	static int countOneBit(int bits) {
-		int cnt = 0;
-		while(bits > 0) {
-			bits -= (bits & -bits);
-			++cnt;
-		}
-		return cnt;
-	}
+
 	
 	static boolean isPassed() {
 		for(int x = 0; x < W; ++x) {
+			// x번째 열이 성능검사를 통과하는 지 확인
 			boolean pass = false;
 			int prev = -1, len = 0;
 			for(int y = 0; y < D; ++y) {
-				int cur = (cells[y] >> x) & 1;
+				int cur = (firms[y] >> x) & 1;
 				if(prev == cur) {
 					++len;
 				} else {
@@ -43,12 +28,12 @@ public class Solution {
 					len = 1;
 				}
 				
-				if(len >= K) {
+				if(len >= K) { // x번째 열이 성능 검사 통과
 					pass = true;
 					break;
 				}
 			}
-			if(!pass) return false;
+			if(!pass) return false; // 성능 검사 불합
 		}
 		return true;
 	}
@@ -56,28 +41,21 @@ public class Solution {
 	static void eachSubset(int idx, int cnt) {
 		if(min < cnt) return; // 가지치기: 최솟값보다 더 투여할 경우 중단
 		
-		if(idx == D) {
+		if(idx == D) { // 기저
 			if(isPassed()) min = Math.min(min, cnt);
 			return;
 		}
 		
-		int cached = cells[idx];
-		eachSubset(idx + 1, cnt); // 투여 X
-		cells[idx] = A;
-		eachSubset(idx + 1, cnt + 1); // 약물 A 투여
-		cells[idx] = B;
-		eachSubset(idx + 1, cnt + 1); // 약물 B 투여
-		cells[idx] = cached; // 복원
+		int cached = firms[idx];
+		eachSubset(idx + 1, cnt); 		// case.1: 투여 X
+		firms[idx] = A;
+		eachSubset(idx + 1, cnt + 1); 	// case.2: 약물 A 투여
+		firms[idx] = B;
+		eachSubset(idx + 1, cnt + 1);	// case.3: 약물 B 투여
+		firms[idx] = cached; // 복원
 	}
 	
 	static int solution() {
-		/*
-		 *  D = 3 ~ 13
-		 *  W = 1 ~ 20
-		 *  경우의 수: 2^D = 2^13 = 8,000
-		 *  단위 시간 복잡도: DW = 260
-		 *  => 2,080,000
-		 */
 		min = Integer.MAX_VALUE;
 		eachSubset(0, 0);
 		return min;
@@ -92,7 +70,7 @@ public class Solution {
 			K = Integer.parseInt(st.nextToken());
 			
 			for(int y = 0; y < D; ++y) {
-				cells[y] = Integer.parseInt(br.readLine().replaceAll(" ", ""), 2);
+				firms[y] = Integer.parseInt(br.readLine().replaceAll(" ", ""), 2); // 비트마스킹으로 변환
 			}
 			sb.append("#").append(t).append(" ").append(solution()).append("\n");
 		}
