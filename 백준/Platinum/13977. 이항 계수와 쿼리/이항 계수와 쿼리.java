@@ -9,43 +9,46 @@ public class Main {
 	
 	static final int MOD = 1_000_000_007;
 	static final int MAX_N = 4_000_000;
+	static final int[] FACT = new int[MAX_N + 1]; // 모듈로가 적용된 팩토리얼
 	
-	static int[] fib = new int[MAX_N + 1];
-	static int M;
-	static int N, K;
+	static int M, N, K;
 	
-	static void initFib() {
-		fib[0] = fib[1] = 1;
+	
+	static void initFactorial() {
+		FACT[0] = FACT[1] = 1;
 		for(int i = 2; i <= MAX_N; ++i) {
-			fib[i] = (int)(( (long)i * fib[i - 1]) % MOD);
+			FACT[i] = (int)((long)FACT[i - 1] * i % MOD);
 		}
 	}
 	
 	static int flt(int n, int m) {
-		long r = 1;
-		long b = n;
+		long ret = 1;
 		long e = m - 2;
+		long b = n;
+		
 		while(e > 0) {
-			if((e & 1) == 1) r = (int)((r * b) % m);
-			b = (int)((b * b) % m);
+			if((e & 1) == 1) ret = ret * b % m;
 			e >>= 1;
+			b = b * b % MOD;
 		}
-		return (int)r;
+		return (int)ret;
 	}
 	
 	static int solution() {
 		K = Math.min(K, N - K);
-		long a = ((long)fib[N] * flt(fib[N - K], MOD)) % MOD;
-		long b = fib[K];
-		return (int)(a * flt((int)b, MOD) % MOD);
+		
+		long numerator = (long)FACT[N] * flt(FACT[N - K], MOD) % MOD;
+		long dominator = FACT[K];
+		return (int)(numerator * flt((int)dominator, MOD) % MOD);
 	}
 	
 	public static void main(String[] args) throws IOException {
-		initFib();
+		initFactorial();
+		
 		M = Integer.parseInt(br.readLine());
-		for(int i = 0; i < M; ++i) {
+		while(M-- > 0) {
 			st = new StringTokenizer(br.readLine());
-			N = Integer.parseInt(st.nextToken());
+			N = Integer.parseInt(st.nextToken()); 
 			K = Integer.parseInt(st.nextToken());
 			
 			sb.append(solution()).append("\n");
