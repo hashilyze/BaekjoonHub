@@ -7,53 +7,72 @@ public class Main {
 	static StringBuilder sb = new StringBuilder();
 	static StringTokenizer st;
 	
-	static final int INF = 1_000 * 100_000;
-	static int N, M, S, T;
-	static List<int[]>[] adj = new List[1_000];
-	static int[] minDist = new int[1_000];
-	static boolean[] isVisited = new boolean[1_000];
+	static class Node implements Comparable<Node>{
+		int vertex, weight;
+		
+		Node() { }
+		Node(int vertex, int weight) {
+			this.vertex = vertex;
+			this.weight = weight;
+		}
+		@Override
+		public int compareTo(Node other) {
+			return this.weight - other.weight;
+		}
+	}
 	
-	static int solution() {
+	static final int MAX_N = 1_000;
+	static final int MAX_W = 100_000;
+	static final int INF = MAX_N * MAX_W;
+	
+	static int N, M, S, T;
+	static List<Node>[] adj = new List[MAX_N];
+	static int[] minDist = new int[MAX_N];
+	
+	
+	static void solution() {
 		Arrays.fill(minDist, 0, N, INF);
 		
-		PriorityQueue<int[]> pq = new PriorityQueue<int[]>((lhs, rhs) -> lhs[1] - rhs[1]);
-		pq.add(new int[] {S, 0});
+		PriorityQueue<Node> pq = new PriorityQueue<Node>();
+		pq.offer(new Node(S, 0));
 		minDist[S] = 0;
 		
 		while(!pq.isEmpty()) {
-			int[] node = pq.poll();
-			int u = node[0], w = node[1];
-			if(isVisited[u]) continue;
-			isVisited[u] = true;
+			Node node = pq.poll();
+			int u = node.vertex, w = node.weight;
+			if(u == T) break;
 			
-			for(int[] next : adj[u]) {
-				int v = next[0], edge = next[1];
+			for(Node next : adj[u]) {
+				int v = next.vertex, edge = next.weight;
 				if(w + edge < minDist[v]) {
 					minDist[v] = w + edge;
-					pq.add(new int[] {v, minDist[v]});
+					pq.offer(new Node(v, minDist[v]));
 				}
 			}
 		}
-		return minDist[T];
 	}
 	
 	public static void main(String[] args) throws IOException {
+		// Input
 		N = Integer.parseInt(br.readLine());
-		M = Integer.parseInt(br.readLine());
+		for(int i = 0; i < N; ++i) adj[i] = new ArrayList<Node>();
 		
-		for(int i = 0; i < N; ++i) adj[i] = new ArrayList<int[]>();
+		M = Integer.parseInt(br.readLine());
 		for(int i = 0; i < M; ++i) {
 			st = new StringTokenizer(br.readLine());
 			int u = Integer.parseInt(st.nextToken()) - 1;
 			int v = Integer.parseInt(st.nextToken()) - 1;
 			int w = Integer.parseInt(st.nextToken());
-			adj[u].add(new int[] {v, w});
+			adj[u].add(new Node(v, w));
 		}
 		
 		st = new StringTokenizer(br.readLine());
 		S = Integer.parseInt(st.nextToken()) - 1;
 		T = Integer.parseInt(st.nextToken()) - 1;
 		
-		System.out.println(solution());
+		solution();
+		
+		// Output
+		System.out.print(minDist[T]);
 	}
 }
