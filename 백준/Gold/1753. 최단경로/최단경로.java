@@ -16,7 +16,7 @@ public class Main {
 	
 	static final int MAX_V = 20_000;
 	static final int MAX_E = 300_000;
-	static final int INF = Integer.MAX_VALUE;
+	static final int INF = MAX_V * 10;
 	
 	static int V, E, K;
 	static List<Node>[] adj = new ArrayList[MAX_V];
