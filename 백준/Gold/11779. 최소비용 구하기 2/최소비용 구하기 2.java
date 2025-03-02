@@ -40,7 +40,6 @@ public class Main {
 			}
 		}
 		
-		isVisited = new boolean[MAX_N];
 		int iu = T, iDist = minDist[T];
 		isVisited[iu] = true;
 		path.add(iu);
@@ -48,10 +47,7 @@ public class Main {
 		while(iu != S) {
 			for(int[] node : invAdj[iu]) {
 				int iv = node[0], iw = node[1];
-				if(isVisited[iv]) continue;
-				
 				if(minDist[iv] + iw == iDist) {
-					isVisited[iu] = true;
 					path.add(iv);
 					iu = iv;
 					iDist -= iw;
