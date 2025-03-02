@@ -8,10 +8,10 @@ public class Main {
 	static StringTokenizer st;
 	
 	static class Node {
-		int v, w;
+		int next, w;
 		
 		Node() { }
-		Node(int v, int w) { this.v = v; this.w = w; }
+		Node(int next, int w) { this.next = next; this.w = w; }
 	}
 	
 	static final int MAX_V = 20_000;
@@ -28,15 +28,17 @@ public class Main {
 		
 		PriorityQueue<Node> q = new PriorityQueue<>((lhs, rhs) -> lhs.w - rhs.w);
 		q.offer(new Node(K, 0));
+		minDist[K] = 0;
 		
 		while(!q.isEmpty()) {
 			Node u = q.poll();
-			if(minDist[u.v] != INF) continue;
-			minDist[u.v] = u.w;
 			
-			for(Node v : adj[u.v]) {
-				if(minDist[v.v] != INF) continue;
-				q.offer(new Node (v.v, u.w + v.w));
+			for(Node v : adj[u.next]) {
+				int nextW = u.w + v.w;
+				if(nextW < minDist[v.next]) {
+					minDist[v.next] = nextW;
+					q.offer(new Node (v.next, nextW));
+				}
 			}
 		}
 	}
