@@ -13,8 +13,9 @@ public class Main {
 	static int N, M, S, T;
 	static List<int[]>[] adj = new List[MAX_N];
 	static List<int[]>[] invAdj = new List[MAX_N];
-	static int[] minDist = new int[1_000];
 	static boolean[] isVisited = new boolean[MAX_N];
+	static int[] minDist = new int[MAX_N];
+	static int[] previous = new int[MAX_N];
 	static List<Integer> path = new ArrayList<Integer>();
 	
 	
@@ -34,26 +35,18 @@ public class Main {
 			for(int[] next : adj[u]) {
 				int v = next[0], edge = next[1];
 				if(w + edge < minDist[v]) {
+					previous[v] = u;
 					minDist[v] = w + edge;
 					pq.add(new int[] {v, minDist[v]});
 				}
 			}
 		}
 		
-		int iu = T, iDist = minDist[T];
-		isVisited[iu] = true;
-		path.add(iu);
-		
-		while(iu != S) {
-			for(int[] node : invAdj[iu]) {
-				int iv = node[0], iw = node[1];
-				if(minDist[iv] + iw == iDist) {
-					path.add(iv);
-					iu = iv;
-					iDist -= iw;
-					break;
-				}
-			}
+		int x = T;
+		path.add(T);
+		while(x != S) {
+			x = previous[x];
+			path.add(x);
 		}
 		Collections.reverse(path);
 		return minDist[T];
