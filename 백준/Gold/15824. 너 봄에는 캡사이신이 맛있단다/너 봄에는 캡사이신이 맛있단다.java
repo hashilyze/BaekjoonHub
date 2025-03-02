@@ -13,7 +13,16 @@ public class Main {
 	
 	static int N;
 	static int[] A = new int[MAX_N];
-	 
+	
+	static int mAdd(int lhs, int rhs) {
+		return (int)( ((long)lhs + rhs) % MOD );
+	}
+	static int mSubtract(int lhs, int rhs) {
+		return (int)( ((long)lhs - rhs + MOD) % MOD );
+	}
+	static int mMultiply(int lhs, int rhs) {
+		return (int)( ((long)lhs * rhs) % MOD );
+	}
 	
 	static void initPow() {
 		POW[0] = 1;
@@ -23,13 +32,18 @@ public class Main {
 	}
 	
 	static int solution() {
+		Arrays.sort(A, 0, N);
+		for(int i = 0; i < N; ++i) A[i] %= MOD;;
+		
 		int ans = 0;
-		for(int minIdx = 0; minIdx < N - 1; ++minIdx) {
-			for(int maxIdx = minIdx + 1; maxIdx < N; ++maxIdx) {
-				long diff = (A[maxIdx] - A[minIdx]) % MOD;
-				long pow = POW[maxIdx - minIdx - 1];
-				ans = (int)((ans + (diff * pow)) % MOD);
-			}
+		int lcur = 0, rcur = N - 1, sum = 0;
+		while(lcur < rcur) {
+			sum = mAdd(sum, mSubtract(A[rcur], A[lcur]));
+			int pow = lcur != rcur - 1 ? POW[lcur] + POW[rcur - 1] : POW[lcur];
+			ans = mAdd(ans, mMultiply(sum, pow));
+			
+			++lcur;
+			--rcur;
 		}
 		return ans;
 	}
@@ -39,10 +53,8 @@ public class Main {
 		
 		N = Integer.parseInt(br.readLine());
 		st = new StringTokenizer(br.readLine());
-		for(int i = 0; i < N; ++i) {
-			A[i] = Integer.parseInt(st.nextToken());
-		}
-		Arrays.sort(A, 0, N);
+		for(int i = 0; i < N; ++i) A[i] = Integer.parseInt(st.nextToken());
+		
 		System.out.print(solution());
 	}
 }
