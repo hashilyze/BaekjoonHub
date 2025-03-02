@@ -43,6 +43,7 @@ public class Main {
 		while(!pq.isEmpty()) {
 			Node node = pq.poll();
 			int u = node.vertex, w = node.weight;
+			if(u == T) break;
 			if(isVisited[u]) continue;
 			isVisited[u] = true;
 			
