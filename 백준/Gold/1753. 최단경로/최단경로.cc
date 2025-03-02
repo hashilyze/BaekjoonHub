@@ -19,15 +19,16 @@ void solution() {
     std::fill(minDist, minDist + V, INF);
     
     pq.push(std::make_pair(0, K));
-    
+    minDist[K] = 0;
+
     while(!pq.empty()) {
         pii u = pq.top(); pq.pop();
-        if(minDist[u.second] != INF) continue;
-        minDist[u.second] = u.first;
         
         for(const pii& v : adj[u.second]) {
-            if(u.first + v.first < minDist[v.second]){
-                pq.push(std::make_pair(u.first + v.first, v.second));
+            int nextW = u.first + v.first;
+            if(nextW < minDist[v.second]){
+                minDist[v.second] = nextW;
+                pq.push(std::make_pair(nextW, v.second));
             }
         }
     }
