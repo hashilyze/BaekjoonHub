@@ -1,5 +1,4 @@
 import java.io.*;
-import java.math.BigInteger;
 import java.util.*;
 
 public class Main {
@@ -8,22 +7,22 @@ public class Main {
 	static StringBuilder sb = new StringBuilder();
 	static StringTokenizer st;
 	
-	static final BigInteger MOD = new BigInteger("1000000007");
+	static final int MOD = 1_000_000_007;
 	
-	static BigInteger A, X;
+	static long A, X;
 	
-	static BigInteger solution() {
-		BigInteger ans = BigInteger.ONE, b = A, e = X;
-		while(!e.equals(BigInteger.ZERO)) {
-			if(e.testBit(0)) ans = ans.multiply(b).mod(MOD);
-			e = e.shiftRight(1);
-			b = b.multiply(b).mod(MOD);
+	static int solution() {
+		long ans = 1, b = A % MOD, e = X;
+		while(e > 0) {
+			if((e & 1) == 1) ans = ans * b % MOD;
+			e >>= 1;
+			b = b * b % MOD;
 		}
-		return ans;
+		return (int)ans;
 	}
 	public static void main(String[] args) throws IOException {
-		A = new BigInteger(br.readLine());
-		X = new BigInteger(br.readLine());
+		A = Long.parseLong(br.readLine()); 
+		X = Long.parseLong(br.readLine());
 		System.out.print(solution());
 	}
 }
