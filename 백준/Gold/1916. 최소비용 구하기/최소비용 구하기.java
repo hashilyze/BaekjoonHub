@@ -11,6 +11,7 @@ public class Main {
 	static int N, M, S, T;
 	static List<int[]>[] adj = new List[1_000];
 	static int[] minDist = new int[1_000];
+	static boolean[] isVisited = new boolean[1_000];
 	
 	static int solution() {
 		Arrays.fill(minDist, 0, N, INF);
@@ -22,7 +23,8 @@ public class Main {
 		while(!pq.isEmpty()) {
 			int[] node = pq.poll();
 			int u = node[0], w = node[1];
-			if(minDist[u] < w) continue;
+			if(isVisited[u]) continue;
+			isVisited[u] = true;
 			
 			for(int[] next : adj[u]) {
 				int v = next[0], edge = next[1];
