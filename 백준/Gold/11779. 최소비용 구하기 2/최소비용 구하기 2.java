@@ -7,37 +7,51 @@ public class Main {
 	static StringBuilder sb = new StringBuilder();
 	static StringTokenizer st;
 	
+	static class Node implements Comparable<Node>{
+		int vertex, weight;
+		
+		Node() { }
+		Node(int vertex, int weight) {
+			this.vertex = vertex;
+			this.weight = weight;
+		}
+		@Override
+		public int compareTo(Node other) {
+			return this.weight - other.weight;
+		}
+	}
+	
 	static final int MAX_N = 1_000;
 	static final int MAX_W = 100_000;
 	static final int INF = MAX_N * MAX_W;
+	
 	static int N, M, S, T;
-	static List<int[]>[] adj = new List[MAX_N];
-	static List<int[]>[] invAdj = new List[MAX_N];
+	static List<Node>[] adj = new List[MAX_N];
 	static boolean[] isVisited = new boolean[MAX_N];
 	static int[] minDist = new int[MAX_N];
 	static int[] previous = new int[MAX_N];
 	static List<Integer> path = new ArrayList<Integer>();
 	
 	
-	static int solution() {
+	static void solution() {
 		Arrays.fill(minDist, 0, N, INF);
 		
-		PriorityQueue<int[]> pq = new PriorityQueue<int[]>((lhs, rhs) -> lhs[1] - rhs[1]);
-		pq.add(new int[] {S, 0});
+		PriorityQueue<Node> pq = new PriorityQueue<Node>();
+		pq.offer(new Node(S, 0));
 		minDist[S] = 0;
 		
 		while(!pq.isEmpty()) {
-			int[] node = pq.poll();
-			int u = node[0], w = node[1];
+			Node node = pq.poll();
+			int u = node.vertex, w = node.weight;
 			if(isVisited[u]) continue;
 			isVisited[u] = true;
 			
-			for(int[] next : adj[u]) {
-				int v = next[0], edge = next[1];
+			for(Node next : adj[u]) {
+				int v = next.vertex, edge = next.weight;
 				if(w + edge < minDist[v]) {
 					previous[v] = u;
 					minDist[v] = w + edge;
-					pq.add(new int[] {v, minDist[v]});
+					pq.offer(new Node(v, minDist[v]));
 				}
 			}
 		}
@@ -49,22 +63,20 @@ public class Main {
 			path.add(x);
 		}
 		Collections.reverse(path);
-		return minDist[T];
 	}
 	
 	public static void main(String[] args) throws IOException {
+		// Input
 		N = Integer.parseInt(br.readLine());
-		M = Integer.parseInt(br.readLine());
+		for(int i = 0; i < N; ++i) adj[i] = new ArrayList<Node>();
 		
-		for(int i = 0; i < N; ++i) adj[i] = new ArrayList<int[]>();
-		for(int i = 0; i < N; ++i) invAdj[i] = new ArrayList<int[]>();
+		M = Integer.parseInt(br.readLine());
 		for(int i = 0; i < M; ++i) {
 			st = new StringTokenizer(br.readLine());
 			int u = Integer.parseInt(st.nextToken()) - 1;
 			int v = Integer.parseInt(st.nextToken()) - 1;
 			int w = Integer.parseInt(st.nextToken());
-			adj[u].add(new int[] {v, w});
-			invAdj[v].add(new int[] {u, w});
+			adj[u].add(new Node(v, w));
 		}
 		
 		st = new StringTokenizer(br.readLine());
@@ -72,9 +84,11 @@ public class Main {
 		T = Integer.parseInt(st.nextToken()) - 1;
 		
 		solution();
+		
+		// Output
 		sb.append(minDist[T]).append("\n")
 			.append(path.size()).append("\n");
 		for(int v : path) sb.append(v + 1).append(" ");
-		System.out.println(sb);
+		System.out.print(sb);
 	}
 }
