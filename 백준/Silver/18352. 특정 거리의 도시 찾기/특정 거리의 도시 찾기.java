@@ -10,25 +10,29 @@ public class Main {
 	static int N, M, K, X;
 	static List<Integer>[] adj = new List[300_000];
 	static boolean[] isVisited = new boolean[300_000];
-	static List<Integer> ans = new ArrayList<Integer>();
+	static List<Integer> ans;
 	
 	static void solution() {
 		Deque<int[]> q = new ArrayDeque<int[]>();
 		q.add(new int[] {X, 0});
 		isVisited[X] = true;
 		
-		while(!q.isEmpty()) {
-			int[] node = q.pollFirst();
-			int u = node[0], w = node[1];
-			
-			for(int v : adj[u]) {
-				if(isVisited[v]) continue;
+		int loop = 0;
+		while(!q.isEmpty() && loop++ < K) {
+			for(int i = 0, n = q.size(); i < n; ++i) {
+				int[] node = q.pollFirst();
+				int u = node[0], w = node[1];
 				
-				isVisited[v] = true;
-				q.add(new int[] {v, w + 1});
-				if(w + 1 == K) ans.add(v);
+				for(int v : adj[u]) {
+					if(isVisited[v]) continue;
+					
+					isVisited[v] = true;
+					q.add(new int[] {v, w + 1});
+				}
 			}
 		}
+		ans = new ArrayList<Integer>(q.size());
+		for(int[] e : q) ans.add(e[0]);
 	}
 	
 	public static void main(String[] args) throws IOException {
