@@ -32,6 +32,7 @@ public class Main {
 		
 		while(!q.isEmpty()) {
 			Node u = q.poll();
+			if(minDist[u.next] < u.w) continue;
 			
 			for(Node v : adj[u.next]) {
 				int nextW = u.w + v.w;
