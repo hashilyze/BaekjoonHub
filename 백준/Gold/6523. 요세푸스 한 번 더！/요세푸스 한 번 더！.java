@@ -10,15 +10,21 @@ public class Main {
 	static int N, a, b;
 	
 	static int solution() {
-		Map<Integer, Integer> hits = new HashMap<>();
+		Set<Integer> hits = new HashSet<>();
 		
+		int cnt = 0;
 		int x = 0;
-		int next = 0;
 		while(true) {
-			if(hits.containsKey(x)) return N - (next - hits.get(x));
-			
-			hits.put(x, next++);
+			if(hits.contains(x)) break;
+			hits.add(x);
 			x = (int)((((((long)a * x) % N) * x) % N + b) % N);
+			
+		}
+		int anchor = x;
+		while(true) {
+			++cnt;
+			x = (int)((((((long)a * x) % N) * x) % N + b) % N);
+			if(anchor == x) return N - cnt;
 		}
 	}
 	
@@ -32,8 +38,9 @@ public class Main {
 			b = Integer.parseInt(st.nextToken());
 			
 			// Output
-			System.out.println(solution());
-			System.gc();
+			sb.append(solution()).append("\n");
+            System.gc();
 		}
+		System.out.print(sb);
 	}
 }
