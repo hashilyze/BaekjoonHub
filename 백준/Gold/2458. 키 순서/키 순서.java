@@ -2,19 +2,19 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+	// Input Handler
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder sb = new StringBuilder();
-	static StringTokenizer st = null;
-	
-	static final int MAX_N = 500;
-	static final int INF = MAX_N * MAX_N;
-	
+	static StringTokenizer st;
+	// constants
+	static int MAX_N = 500;
+	static int INF = MAX_N + 1;
+	// variables
 	static int N, M;
-	static int[][] adj = new int[MAX_N][MAX_N]; // adj[i][j]: 키의 오름차순으로 생성한 그래프
-	static int[][] iAdj = new int[MAX_N][MAX_N]; // iAdj[i][j]: 키의 내림차순으로 생성한 그래프
+	static int[][] adj = new int[MAX_N][MAX_N];
 	
 	
-	static void floyd(int N, int[][] adj) {
+	static void floyd(int[][] adj) {
 		for(int k = 0; k < N; ++k) {
 			for(int i = 0; i < N; ++i) {
 				for(int j = 0; j < N; ++j) {
@@ -24,40 +24,45 @@ public class Main {
 		}
 	}
 	
-	static int solution() {
-		floyd(N, adj);
-		floyd(N, iAdj);
-		
-		int cnt = 0;
-		for(int i = 0; i < N; ++i) { 
-			// 나머지 N-1명의 학생이 자신보다 앞인지 뒤인지 알아야 순위를 알 수 있음
-			int sum = -2; // 자기자신과는 항상 연결되어 있으므로 제외
-			for(int j = 0; j < N; ++j) {
-				if(adj[i][j] != INF) ++sum;
-				if(iAdj[i][j] != INF) ++sum;
-			}
-			if(sum == N - 1) ++cnt;
-		}
-		return cnt;
-	}
-	
 	public static void main(String[] args) throws IOException {
-		st = new StringTokenizer(br.readLine());
-		N = Integer.parseInt(st.nextToken());
-		M = Integer.parseInt(st.nextToken());
-		
+		/* 
+		 * 1. 자신보다 우선순위가 높은/낮은 학생의 수를 구한다. 
+		 * 2. 등수를 알기 위해선 우선순위를 판별할 수 있는 학생 수가 (N-1)명이어야 한다.
+		 */
+		// Input
+		N = readInt();
+		M = readInt();
 		for(int i = 0; i < N; ++i) { // 인접 행렬 초기화
 			Arrays.fill(adj[i], INF);
-			Arrays.fill(iAdj[i], INF);
-			adj[i][i] = iAdj[i][i] = 0;
+			adj[i][i] = 0;
 		}
-		
 		for(int i = 0; i < M; ++i) {
-			st = new StringTokenizer(br.readLine());
-			int a = Integer.parseInt(st.nextToken()) - 1;
-			int b = Integer.parseInt(st.nextToken()) - 1;
-			adj[a][b] = iAdj[b][a]= 1;
+			int u = readInt() - 1;
+			int v = readInt() - 1;
+			adj[u][v] = 1;
 		}
-		System.out.print(solution());
+		// Solution
+		floyd(adj);
+		
+		int cnt = 0;
+		for(int i = 0; i < N; ++i) {
+			int connected = 0;
+			for(int j = 0; j < N; ++j) { 				
+				if(adj[i][j] != INF || adj[j][i] != INF) ++connected;
+			}
+			if(connected == N) ++cnt;
+		}
+		System.out.println(cnt);
+	}
+	
+	// 부호없는 양의 정수 읽기
+	static int readInt() throws IOException { 
+		int c, n;
+		while((c = System.in.read()) < 0x20);
+		n = c & 0x0F;
+		while((c = System.in.read()) >= 0x30) {
+			n = (n << 3) + (n << 1) + (c & 0x0F);
+		}
+		return n;
 	}
 }
