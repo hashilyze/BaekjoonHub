@@ -12,7 +12,7 @@ public class Main {
 	// variables
 	static int N, M;
 	static int[][] adj = new int[MAX_N][MAX_N];
-	static int[][] iAdj = new int[MAX_N][MAX_N];
+	
 	
 	static void floyd(int[][] adj) {
 		for(int k = 0; k < N; ++k) {
@@ -34,20 +34,18 @@ public class Main {
 		M = readInt();
 		for(int i = 0; i < N; ++i) { // 인접 행렬 초기화
 			Arrays.fill(adj[i], INF);
-			Arrays.fill(iAdj[i], INF);
 		}
 		for(int i = 0; i < M; ++i) {
 			int u = readInt() - 1;
 			int v = readInt() - 1;
 			adj[u][v] = 1;
-			iAdj[v][u] = 1;
 		}
 		// Solution
-		floyd(adj); // 키 오름차순 방향으로 그래프 연결
-		floyd(iAdj); // 키 내림차순 방향으로 그래프 연결
+		floyd(adj);
+		
 		boolean disable = false;
 		for(int i = 0; i < N; ++i) {
-			if(adj[i][i] != INF || iAdj[i][i] != INF) {
+			if(adj[i][i] != INF) {
 				disable = true;
 				break;
 			}
@@ -60,7 +58,7 @@ public class Main {
 				int lower = 1, upper = N;
 				for(int j = 0; j < N; ++j) {
 					if(adj[i][j] != INF) --upper;
-					if(iAdj[i][j] != INF) ++lower;
+					if(adj[j][i] != INF) ++lower;
 				}
 				sb.append(lower).append(" ").append(upper).append("\n");
 			}
