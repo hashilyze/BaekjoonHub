@@ -1,71 +1,63 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+	static StringBuilder sb = new StringBuilder();
 	static StringTokenizer st = null;
 	
 	static final int MAX_N = 500;
-	static int N, M;
-	static List<Integer>[] adj = new List[MAX_N];
-	static List<Integer>[] reverseAdj = new List[MAX_N];
-    static boolean[] isVisited = new boolean[MAX_N];
+	static final int INF = MAX_N * MAX_N;
 	
-	static int countNodes(int s, List<Integer>[] adj) {
-		Arrays.fill(isVisited, false);
-        
-        int cnt = -1;
-		Deque<Integer> q = new ArrayDeque<>();
-		q.offerLast(s);
-        isVisited[s] = true;
-        ++cnt;
-        
-		while(!q.isEmpty()) {
-			int u = q.pollFirst();
-			
-			for(int v : adj[u]) {
-                if(isVisited[v]) continue;
-                isVisited[v] = true;
-                ++cnt;
-                
-				q.offerLast(v);
+	static int N, M;
+	static int[][] adj = new int[MAX_N][MAX_N]; // adj[i][j]: 키의 오름차순으로 생성한 그래프
+	static int[][] iAdj = new int[MAX_N][MAX_N]; // iAdj[i][j]: 키의 내림차순으로 생성한 그래프
+	
+	
+	static void floyd(int N, int[][] adj) {
+		for(int k = 0; k < N; ++k) {
+			for(int i = 0; i < N; ++i) {
+				for(int j = 0; j < N; ++j) {
+					adj[i][j] = Math.min(adj[i][j], adj[i][k] + adj[k][j]);
+				}
 			}
 		}
-		return cnt;
 	}
 	
 	static int solution() {
+		floyd(N, adj);
+		floyd(N, iAdj);
+		
 		int cnt = 0;
-		// 자신 보다 위에 있는 학생의 수 + 자신보다 밑에 있는 학생의 수 == N - 1 인 경우에만, 정확히 파악 가능
-		for(int u = 0; u < N; ++u) {
-			int cntUpper = countNodes(u, adj);
-			int cntLower = countNodes(u, reverseAdj);
-			if(cntUpper + cntLower == N - 1) {
-				++cnt;
+		for(int i = 0; i < N; ++i) { 
+			// 나머지 N-1명의 학생이 자신보다 앞인지 뒤인지 알아야 순위를 알 수 있음
+			int sum = -2; // 자기자신과는 항상 연결되어 있으므로 제외
+			for(int j = 0; j < N; ++j) {
+				if(adj[i][j] != INF) ++sum;
+				if(iAdj[i][j] != INF) ++sum;
 			}
+			if(sum == N - 1) ++cnt;
 		}
 		return cnt;
 	}
 	
-	public static void main(String args[]) throws Exception {
-		// Inputs
+	public static void main(String[] args) throws IOException {
 		st = new StringTokenizer(br.readLine());
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
 		
-		for(int i = 0; i < N; ++i) adj[i] = new ArrayList<>();
-		for(int i = 0; i < N; ++i) reverseAdj[i] = new ArrayList<>();
+		for(int i = 0; i < N; ++i) { // 인접 행렬 초기화
+			Arrays.fill(adj[i], INF);
+			Arrays.fill(iAdj[i], INF);
+			adj[i][i] = iAdj[i][i] = 0;
+		}
 		
 		for(int i = 0; i < M; ++i) {
 			st = new StringTokenizer(br.readLine());
-			int u = Integer.parseInt(st.nextToken()) - 1;
-			int v = Integer.parseInt(st.nextToken()) - 1;
-			adj[u].add(v);
-			reverseAdj[v].add(u);
+			int a = Integer.parseInt(st.nextToken()) - 1;
+			int b = Integer.parseInt(st.nextToken()) - 1;
+			adj[a][b] = iAdj[b][a]= 1;
 		}
-		
-		// Output
-		bw.append(solution() + "").flush();
+		System.out.print(solution());
 	}
 }
