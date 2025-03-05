@@ -10,29 +10,23 @@ public class Main {
 	// constants
 	static final int MAX_R = 10_000;
 	static final int MAX_C = 500;
-	static final int[][] DELTA = {
-			{1, -1},
-			{1,  0},
-			{1, +1},
-	};
+	static final int[] dy = { -1, 0, 1};
 	// variables
 	static int R, C;
 	static boolean[][] isVisited = new boolean[MAX_R][MAX_C];
 	
 	
-	static boolean inRange(int y, int x) {
-		return 0 <= y && y < R && 0 <= x && x < C; 
-	}
+	static boolean inRange(int y) { return 0 <= y && y < R;  }
 	
 	static boolean countPipe(int y, int x) {
 		if(x == C - 1) {
 			return true;
 		}
 		
-		for(int i = 0; i < DELTA.length; ++i) {
-			int nx = DELTA[i][0] + x;
-			int ny = DELTA[i][1] + y;
-			if(inRange(ny, nx) && !isVisited[ny][nx]) {
+		for(int i = 0; i < dy.length; ++i) {
+			int nx = x + 1;
+			int ny = y + dy[i];
+			if(inRange(ny) && !isVisited[ny][nx]) {
 				isVisited[ny][nx] = true;
 				if(countPipe(ny, nx)) return true;
 			}
