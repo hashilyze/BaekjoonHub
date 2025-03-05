@@ -43,27 +43,22 @@ public class Main {
 		// Solution
 		floyd(adj);
 		
-		boolean disable = false;
 		for(int i = 0; i < N; ++i) {
 			if(adj[i][i] != INF) {
-				disable = true;
-				break;
+				System.out.println(-1);
+				return;
 			}
 		}
 		
-		if(disable) {
-			System.out.println(-1);
-		} else {
-			for(int i = 0; i < N; ++i) {
-				int lower = 1, upper = N;
-				for(int j = 0; j < N; ++j) {
-					if(adj[i][j] != INF) --upper;
-					if(adj[j][i] != INF) ++lower;
-				}
-				sb.append(lower).append(" ").append(upper).append("\n");
+		for(int i = 0; i < N; ++i) {
+			int lower = 1, upper = N;
+			for(int j = 0; j < N; ++j) { 				
+				if(adj[i][j] != INF) --upper;
+				if(adj[j][i] != INF) ++lower;
 			}
-			System.out.println(sb);
+			sb.append(lower).append(" ").append(upper).append("\n");
 		}
+		System.out.println(sb);
 	}
 	
 	// 부호없는 양의 정수 읽기
