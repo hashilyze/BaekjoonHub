@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 
+
 public class Solution {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder sb = new StringBuilder();
@@ -19,7 +20,7 @@ public class Solution {
 	static int N;
 	static int[][] mat = new int[MAX_N][MAX_N];
 	static boolean[][] isVisited = new boolean[MAX_N][MAX_N];
-	static int upper = 0;
+	static int upper = 0; // mat에 존재하는 맛있는 정도의 최댓값
 	
 	
 	static boolean inRange(int y, int x) {
@@ -60,8 +61,8 @@ public class Solution {
 	}
 	
 	static int solution() {
-		int max = 1;
-		for(int i = 1; i <= upper; ++i) {
+		int max = 1; // 0번째 날: 반드시 하나의 구역만 존재
+		for(int i = 1; i < upper; ++i) { // 맛있는 정도가 최대가 되는 날 까지만 실행
 			max = Math.max(max, countArea(i));
 		}
 		return max;
