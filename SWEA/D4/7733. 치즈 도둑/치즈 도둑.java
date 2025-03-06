@@ -73,8 +73,8 @@ public class Solution {
 			N = readInt();
 			for(int y = 0; y < N; ++y) {
 				for(int x = 0; x < N; ++x) {
-					mat[y][x] = readInt();
-					upper = Math.max(upper, mat[y][x]);
+					int v = readInt();
+					if((mat[y][x] = v) > upper) upper = v;
 				}
 			}
 			sb.append("#").append(t).append(" ").append(solution()).append("\n");
