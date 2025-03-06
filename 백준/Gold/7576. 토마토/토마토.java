@@ -17,6 +17,7 @@ public class Main {
 	static int N, M;
 	static int[][] isVisited = new int[SIZE][SIZE];
 	static List<int[]> sources = new ArrayList<>();
+	static int left = 0;
 	
 	
 	static boolean inRange(int y, int x) {
@@ -28,7 +29,7 @@ public class Main {
 		for(int[] s : sources) { // 초기에 주어진 익은 토마토에서부터 전파 시작
 			q.offerLast(s);
 		}
-		int lastDay = 1; // 토마토가 익은 마지막 경과일 (시작일 포함)
+		int lastDay = 1;
 		while(!q.isEmpty()) {
 			int[] u = q.pollFirst();
 			int x = u[0], y = u[1];
@@ -41,17 +42,11 @@ public class Main {
 					// 범위 내에 있는 익지않은 토마토에게 전파
 					lastDay = isVisited[ny][nx] = isVisited[y][x] + 1;
 					q.offerLast(new int[] {nx, ny});
+					--left;
 				}
 			}
 		}
-		
-		// 익지않은 토마토가 존재하는 지 판별
-		for(int y = 0; y < N; ++y) {
-			for(int x = 0; x < M; ++x) {
-				if(isVisited[y][x] == 0) return -1; // 익지않은 토마토가 존재
-			}
-		}
-		return lastDay - 1;
+		return left == 0 ? lastDay - 1 : -1;
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -59,8 +54,11 @@ public class Main {
 		N = readInt();
 		for(int y = 0; y < N; ++y) {
 			for(int x = 0; x < M; ++x) {
-				if((isVisited[y][x] = readInt()) == 1) {
+				int v = isVisited[y][x] = readInt();
+				if(v == 1) {
 					sources.add(new int[] {x, y});
+				} else if(v == 0) {
+					++left;
 				}
 			}
 		}
