@@ -6,21 +6,30 @@ public class Main {
 	static StringBuilder sb = new StringBuilder();
 	static StringTokenizer st = null;
 	
+	static class Node implements Comparable<Node> {
+		int begin, end;
+		
+		Node() { }
+		Node(int beg, int end) { this.begin = beg; this.end = end; }
+		
+		public int compareTo(Node o) { 
+				if(this.end != o.end) return this.end - o.end;
+		return this.begin - o.begin;
+		}
+	};
+	
 	static int N;
-	static int[][] edges = new int[100_000][2];
+	static Node[] edges = new Node[100_000];
 	
 	
 	static int solution() {
-		Arrays.sort(edges, 0, N, (lhs, rhs)-> {
-			if(lhs[1] != rhs[1]) return lhs[1] - rhs[1];
-			return lhs[0] - rhs[0];
-		});
+		Arrays.sort(edges, 0, N);
 		
 		int cnt = 1;
-		int end = edges[0][1];
+		int end = edges[0].end;
 		for(int i = 1; i < N; ++i) {
-			if(end <= edges[i][0]) {
-				end = edges[i][1];
+			if(end <= edges[i].begin) {
+				end = edges[i].end;
 				++cnt;
 			}
 		}
@@ -30,8 +39,7 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		N = readInt();
 		for(int i = 0; i < N; ++i) {
-			edges[i][0] = readInt();
-			edges[i][1] = readInt();
+			edges[i] = new Node(readInt(), readInt());
 		}
 		System.out.println(solution());
 	}
