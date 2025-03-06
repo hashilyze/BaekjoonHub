@@ -19,6 +19,7 @@ public class Solution {
 	static int N;
 	static int[][] mat = new int[MAX_N][MAX_N];
 	static boolean[][] isVisited = new boolean[MAX_N][MAX_N];
+	static int upper = 0;
 	
 	
 	static boolean inRange(int y, int x) {
@@ -60,7 +61,7 @@ public class Solution {
 	
 	static int solution() {
 		int max = 1;
-		for(int i = FIRST_DAY; i <= LAST_DAY; ++i) {
+		for(int i = 1; i <= upper; ++i) {
 			max = Math.max(max, countArea(i));
 		}
 		return max;
@@ -73,6 +74,7 @@ public class Solution {
 			for(int y = 0; y < N; ++y) {
 				for(int x = 0; x < N; ++x) {
 					mat[y][x] = readInt();
+					upper = Math.max(upper, mat[y][x]);
 				}
 			}
 			sb.append("#").append(t).append(" ").append(solution()).append("\n");
