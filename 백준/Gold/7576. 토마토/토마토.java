@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 
+
 public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder sb = new StringBuilder();
@@ -29,7 +30,6 @@ public class Main {
 		for(int[] s : sources) { // 초기에 주어진 익은 토마토에서부터 전파 시작
 			q.offerLast(s);
 		}
-		int lastDay = 1;
 		while(!q.isEmpty()) {
 			int[] u = q.pollFirst();
 			int x = u[0], y = u[1];
@@ -40,13 +40,16 @@ public class Main {
 				
 				if(inRange(ny, nx) && isVisited[ny][nx] == 0) {
 					// 범위 내에 있는 익지않은 토마토에게 전파
-					lastDay = isVisited[ny][nx] = isVisited[y][x] + 1;
+					isVisited[ny][nx] = isVisited[y][x] + 1;
 					q.offerLast(new int[] {nx, ny});
 					--left;
 				}
 			}
+			if(left == 0) {
+				return isVisited[y][x];
+			}
 		}
-		return left == 0 ? lastDay - 1 : -1;
+		return -1;
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -62,7 +65,11 @@ public class Main {
 				}
 			}
 		}
-		System.out.println(solution());
+		if(left == 0) {
+			System.out.println(0);
+		} else {
+			System.out.println(solution());
+		}
 	}
 	
 	// 음수를 포함한 부호없는 정수 읽기
