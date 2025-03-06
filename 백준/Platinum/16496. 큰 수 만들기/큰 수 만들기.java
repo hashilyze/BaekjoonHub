@@ -19,6 +19,7 @@ public class Main {
 			int lenL = lhs.length();
 			int lenR = rhs.length();
 			
+			
 			int cur = 0;
 			while(cur < lenL + lenR) {
 				char lch = 0;
@@ -33,6 +34,7 @@ public class Main {
 				++cur;
 			}
 			return 0;
+			//return -(lhs + rhs).compareTo(rhs + lhs); // 이 문장과 동일한 기능
 		});
 		
 		if(numbers[0].equals("0") && numbers[N - 1].equals("0")) {
