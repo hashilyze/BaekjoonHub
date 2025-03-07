@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 
+
 public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder sb = new StringBuilder();
@@ -16,6 +17,11 @@ public class Main {
 	static int N, K;
 	static int[] isVisited = new int[MAX_N + 10];
 	
+	
+	static boolean isValid(int x) {
+		return 0 <= x && x <= MAX_N + 1 && isVisited[x] == 0;
+	}
+	
 	static int solution() {
 		Deque<Integer> q = new ArrayDeque<>();
 		q.offerLast(N);
@@ -25,21 +31,17 @@ public class Main {
 			int u = q.pollFirst();
 			if(u == K) return isVisited[K];
 			
-			int v;
-			v = u - 1;
-			if(0 <= v && v <= MAX_N + 1 && isVisited[v] == 0) {
-				isVisited[v] = isVisited[u] + 1;
-				q.offerLast(v);
+			if(isValid(u - 1)) {
+				isVisited[u - 1] = isVisited[u] + 1;
+				q.offerLast(u - 1);
 			}
-			v = u + 1;
-			if(0 <= v && v <= MAX_N + 1 && isVisited[v] == 0) {
-				isVisited[v] = isVisited[u] + 1;
-				q.offerLast(v);
+			if(isValid(u + 1)) {
+				isVisited[u + 1] = isVisited[u] + 1;
+				q.offerLast(u + 1);
 			}
-			v = u << 1;
-			if(0 <= v && v <= MAX_N + 1 && isVisited[v] == 0) {
-				isVisited[v] = isVisited[u] + 1;
-				q.offerLast(v);
+			if(isValid(u << 1)) {
+				isVisited[u << 1] = isVisited[u] + 1;
+				q.offerLast(u << 1);
 			}
 		}
 		return -1;
