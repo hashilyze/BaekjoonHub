@@ -11,7 +11,7 @@ public class Main {
 	static final int EMPTY = 0, WALL = 1, VIRUS = 2;
 	static final int[][] DELTA = {
 			{+1,  0},
-			{-1,  0},
+			{-1,  0},	
 			{ 0, +1},
 			{ 0, -1},
 	};
@@ -20,8 +20,9 @@ public class Main {
 	static int[][] mat = new int[SIZE][SIZE];
 	static boolean[][] isVisited = new boolean[SIZE][SIZE];
 	static List<int[]> empties = new ArrayList<>();
-	static List<int[]> virus = new ArrayList<>();
+	static List<int[]> virus = new ArrayList<>(10);
 	static int max = Integer.MIN_VALUE;
+	
 	
 	static boolean inRange(int y, int x) {
 		return 0 <= y && y < N && 0 <= x && x < M;
@@ -67,7 +68,26 @@ public class Main {
 	}
 	
 	static int solution() {
-		eachCombination(0, 3);
+		for(int i = 0; i < empties.size() - 2; ++i) {
+			int[] pos1 = empties.get(i);
+			mat[pos1[1]][pos1[0]] = WALL; // 빈공간을 벽으로 전환
+			
+			for(int j = i + 1; j < empties.size() - 1; ++j) {
+				int[] pos2 = empties.get(j);
+				mat[pos2[1]][pos2[0]] = WALL;
+				
+				for(int k = j + 1; k < empties.size() - 0; ++k) {
+					int[] pos3 = empties.get(k);
+					mat[pos3[1]][pos3[0]] = WALL;
+					
+					max = Math.max(max, getSafeArea());
+					
+					mat[pos3[1]][pos3[0]] = EMPTY;
+				}
+				mat[pos2[1]][pos2[0]] = EMPTY;
+			}
+			mat[pos1[1]][pos1[0]] = EMPTY; // 백트래킹
+		}
 		return max;
 	}
 	
@@ -80,7 +100,6 @@ public class Main {
 				mat[y][x] = readInt();
 				if(mat[y][x] == EMPTY) empties.add(new int[] {x, y});
 				else if(mat[y][x] == VIRUS) virus.add(new int[] {x, y});
-				
 			}
 		}
 		System.out.print(solution());
