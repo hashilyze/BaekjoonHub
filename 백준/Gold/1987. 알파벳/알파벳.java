@@ -27,23 +27,21 @@ public class Main {
 		for(int i = 0; i < DELTA.length; ++i) {
 			int nx = x + DELTA[i][0];
 			int ny = y + DELTA[i][1];
-			if(inRange(ny, nx) 
-					&& isVisited[ny][nx] == 0 
-					&& ((bAlphabets >> mat[ny][nx] - 'A') & 1) == 0
-					){
-				
-				isVisited[ny][nx] = isVisited[y][x] + 1;
-				dfs(ny, nx, bAlphabets | (0x01 << mat[ny][nx] - 'A'));
-				isVisited[ny][nx] = 0;
+			if(!inRange(ny, nx)) continue;
+			
+			int mask = 0x01 << mat[ny][nx] - 'A';
+			int bNextAlphabets = bAlphabets | mask;
+			if((bAlphabets & mask) == 0 && isVisited[ny][nx] != bNextAlphabets){
+				isVisited[ny][nx] = bNextAlphabets;
+				dfs(ny, nx, bNextAlphabets);
 			}
 		}
-		max = Math.max(max, isVisited[y][x]);
+		max = Math.max(max, Integer.bitCount(isVisited[y][x]));
 	}
 	
 	static int solution() {
-		isVisited[SY][SX] = 1;
-		dfs(SY, SX, 0x01 << mat[SY][SX] - 'A');
-		isVisited[SY][SX] = 0;
+		isVisited[SY][SX] = 0x01 << mat[SY][SX] - 'A';
+		dfs(SY, SX, isVisited[SY][SX]);
 		return max;
 	}
 	
