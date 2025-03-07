@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 
+
 public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder sb = new StringBuilder();
@@ -21,7 +22,8 @@ public class Main {
 	
 	static boolean inRange(int y, int x) { return 0 <= y && y < N && 0 <= x && x < N;  }
 	
-	static void floodFill(int ay, int ax, char flag1, char flag2) {
+	static void floodFill(int ay, int ax) {
+		char flag = mat[ay][ax];
 		Deque<int[]> q = new ArrayDeque<int[]>();
 		q.offer(new int[] {ax, ay});
 		isVisited[ay][ax] = true;
@@ -32,7 +34,7 @@ public class Main {
 			for(int i = 0; i < DELTA.length; ++i) {
 				int nx = u[0] + DELTA[i][0];
 				int ny = u[1] + DELTA[i][1];
-				if(inRange(ny, nx) && !isVisited[ny][nx] && (mat[ny][nx] == flag1 || mat[ny][nx] == flag2)) {
+				if(inRange(ny, nx) && !isVisited[ny][nx] && mat[ny][nx] == flag) {
 					q.offer(new int[] {nx, ny});
 					isVisited[ny][nx] = true;
 				}
@@ -46,7 +48,7 @@ public class Main {
 		for(int y = 0; y < N; ++y) {
 			for(int x = 0; x < N; ++x) {
 				if(isVisited[y][x]) continue;
-				floodFill(y, x, mat[y][x], mat[y][x]); // 하나의 색상에 대해서만 floodfill 수행
+				floodFill(y, x);
 				++cnt1;
 			}
 		}
@@ -54,9 +56,14 @@ public class Main {
 		for(int i = 0; i < N; ++i) Arrays.fill(isVisited[i], 0, N, false);
 		for(int y = 0; y < N; ++y) {
 			for(int x = 0; x < N; ++x) {
+				if(mat[y][x] == 'G') mat[y][x] = 'R';
+			}
+		}
+		
+		for(int y = 0; y < N; ++y) {
+			for(int x = 0; x < N; ++x) {
 				if(isVisited[y][x]) continue;
-				if(mat[y][x] == 'B') floodFill(y, x, 'B', 'B');
-				else floodFill(y, x, 'R', 'G'); // R 또는 G이면, 두가지 색상에 대해서 fllodfill 수행
+				floodFill(y, x);
 				++cnt2;
 			}
 		}
