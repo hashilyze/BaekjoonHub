@@ -28,14 +28,11 @@ public class Main {
 	}
 	
 	static int getSafeArea() {
+		// 초기화
 		for(int i = 0; i < N; ++i) Arrays.fill(isVisited[i], false);
-		
 		int area = empties.size() - 3; // 바이러스가 전파되기 전 안전영역의 크기
-		Deque<int[]> q = new ArrayDeque<int[]>(); // 바이러스 초기화
-		for(int[] v : virus) {
-			q.offerLast(v);
-			isVisited[v[1]][v[0]] = true;
-		}
+		Deque<int[]> q = new ArrayDeque<int[]>(); // 바이러스 할당
+		for(int[] v : virus) q.offerLast(v);
 		
 		while(!q.isEmpty()) { // 바이러스 전파
 			int[] u = q.pollFirst();
@@ -43,7 +40,8 @@ public class Main {
 			for(int i = 0; i < DELTA.length; ++i) {
 				int nx = u[0] + DELTA[i][0];
 				int ny = u[1] + DELTA[i][1];
-				if(inRange(ny, nx) && mat[ny][nx] == EMPTY && !isVisited[ny][nx]) {
+				// 바이러스가 퍼지지 않은 빈공간에 전파
+				if(inRange(ny, nx) && mat[ny][nx] == EMPTY && !isVisited[ny][nx]) { 
 					q.offerLast(new int[] {nx, ny});
 					isVisited[ny][nx] = true;
 					--area;
@@ -55,16 +53,16 @@ public class Main {
 	}
 	
 	static void eachCombination(int idx, int left) {
-		if(left == 0) {
+		if(left == 0) { // 기저: 벽 위치 결정 완료
 			max = Math.max(max, getSafeArea());
 			return;
 		}
 		
 		for(int i = idx; i < empties.size() - left + 1; ++i) {
 			int[] pos = empties.get(i);
-			mat[pos[1]][pos[0]] = WALL;
-			eachCombination(i + 1, left - 1);
-			mat[pos[1]][pos[0]] = EMPTY;
+			mat[pos[1]][pos[0]] = WALL; // 빈공간을 벽으로 전환
+			eachCombination(i + 1, left - 1); 
+			mat[pos[1]][pos[0]] = EMPTY; // 백트래킹
 		}
 	}
 	
@@ -88,6 +86,7 @@ public class Main {
 		System.out.print(solution());
 	}
 	
+	// 부호없는 정수 읽기
 	static int readInt() throws IOException{
 		int c, n = 0;
 		while((c = System.in.read()) < 0x20);
