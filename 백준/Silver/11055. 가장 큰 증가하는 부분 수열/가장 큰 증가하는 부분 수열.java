@@ -12,7 +12,6 @@ public class Main {
 	static int N;
 	static int[] A = new int[MAX_N];
 	static int[] buffer = new int[MAX_N]; // LIS 생성에 이용하는 버퍼; buffer[i]: LIS길이가 (i+1)인 가장 마지막 원소의 인덱스
-	static int[] dpLen = new int[MAX_N];
 	static int[] dpAcc = new int[MAX_N];
 	
 	static int lower_bound(int beg, int end, int val) {
@@ -30,8 +29,7 @@ public class Main {
 		for(int i = 0; i < N; ++i) { 
 			int at = lower_bound(0, length, A[i]); // 마지막 원소가 A[i]인 LIS의 길이 찾기 
 			buffer[at] = A[i];
-			dpLen[i] = at + 1;
-			if(dpLen[i] == 1) dpAcc[i] = A[i];
+			if(at == 0) dpAcc[i] = A[i];
 			else {
 				for(int j = 0; j < i; ++j) {
 					if(A[j] < A[i]) {
@@ -39,7 +37,7 @@ public class Main {
 					}
 				}
 			}
-			length = Math.max(length, dpLen[i]);
+			length = Math.max(length, at + 1);
 			max = Math.max(max, dpAcc[i]);
 		}
 		return max;
