@@ -4,60 +4,63 @@ import java.util.*;
 public class Main {
 	// Input Handler
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-	static StringTokenizer st = null;
+	static StringBuilder sb = new StringBuilder();
+	static StringTokenizer st;
 	// constants
 	static final int MAX_N = 1_000_000;
 	// variables
 	static int N;
-	static int[] seq = new int[MAX_N];
-	static int[] buffer = new int[MAX_N];   // LIS를 생성하는 버퍼: seq의 원소를 가리키는 인덱스 저장
-	static int[] parents = new int[MAX_N];  // 순열의 i번째 원소의 직전 LIS 원소를 가리킴
-	static int[] lis= new int[MAX_N]; 		// LIS 결과
+	static int[] A = new int[MAX_N];
+	static int[] buffer = new int[MAX_N]; // LIS 생성에 이용하는 버퍼; buffer[i]: LIS길이가 (i+1)인 가장 마지막 원소의 인덱스
+	static int[] dp = new int[MAX_N]; // A[i]가 LIS의 마지막 원소일 때의 길이
 	
+	static int length = 0; // LIS의 길이
+	static int[] lis = new int[MAX_N];
 	
-	static int lower_bound(int val, int[] arr, int lo, int hi) {
-		while(lo < hi) {
-			int mid = (lo + hi) >> 1;
-			if(seq[arr[mid]] < val) {
-				lo = mid + 1;
-			} else {
-				hi = mid;
-			}
+	static int lower_bound(int beg, int end, int val) {
+		while(beg != end) {
+			int mid = (beg + end) >> 1;
+			if(buffer[mid] < val) beg = mid + 1;
+			else end = mid;
 		}
-		return lo;
+		return beg;
 	}
 	
-	static int getLIS(int beg, int end) {
-		// LIS 조회
-		int size = 0;
-		for(int i = beg; i < end; ++i) {
-			int at = lower_bound(seq[i], buffer, 0, size);
-			if(at == size) ++size;
-			buffer[at] = i;
-			parents[i] = buffer[at != 0 ? at - 1 : i];
+	static void solution() {		
+		for(int i = 0; i < N; ++i) { 
+			int at = lower_bound(0, length, A[i]); // 마지막 원소가 A[i]인 LIS의 길이 찾기 
+			buffer[at] = A[i];
+			dp[i] = at;
+			length = Math.max(length, at + 1);
 		}
-		// LIS 생성
-		int cur = size - 1;
-		int node = buffer[size - 1];
-		while(cur >= 0) {
-			lis[cur] = seq[node];
-			--cur;
-			node = parents[node];
+		
+		for(int i = N - 1, at = length - 1; i >= 0; --i) {
+			if(dp[i] == at) {
+				lis[dp[i]] = A[i];
+				--at;
+			}
 		}
-		return size;
 	}
 	
 	public static void main(String[] args) throws IOException {
-		N = Integer.parseInt(br.readLine());
-		st = new StringTokenizer(br.readLine());
-		for(int i = 0; i< N; ++i) seq[i] = Integer.parseInt(st.nextToken());
-		
-		int size = getLIS(0, N);
-		bw.append(size + "\n");
-		for(int i = 0; i < size; ++i) {
-			bw.append(lis[i] + " ");
+		N = readInt();
+		for(int i = 0; i < N; ++i) A[i] = readInt();
+		solution();
+		sb.append(length).append("\n");
+		for(int i = 0; i < length; ++i) sb.append(lis[i]).append(" ");
+		System.out.print(sb);
+	}
+	
+	// 부호없는 정수 읽기
+	static int readInt() throws IOException {
+		int c, n = 0, s = 1;
+		while((c = System.in.read()) <= 0x20);
+		if(c == '-') {
+			s = -1;
+			c = System.in.read();
 		}
-		bw.flush();
+		n = c & 0x0F;
+		while((c = System.in.read()) >= 0x30) n = (n << 3) + (n << 1) + (c & 0x0F);
+		return n * s;
 	}
 }
