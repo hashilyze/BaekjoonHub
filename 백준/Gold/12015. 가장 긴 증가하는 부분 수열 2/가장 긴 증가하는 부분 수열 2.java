@@ -4,48 +4,47 @@ import java.util.*;
 public class Main {
 	// Input Handler
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-	static StringTokenizer st;	
+	static StringBuilder sb = new StringBuilder();
+	static StringTokenizer st;
 	// constants
-	static int MAX_N = 1_000_000;
+	static final int MAX_N = 1_000_000;
 	// variables
 	static int N;
-	static int[] perm = new int[MAX_N];
+	static int[] A = new int[MAX_N];
+	static int[] buffer = new int[MAX_N]; // LIS를 생성하는 데 사용할 버퍼
 	
-	static int lower_bound(int val, int[] arr, int left, int right) {
-		while(left < right) {
-			int mid = (left + right) / 2;
-			if(arr[mid] < val) {
-				left = mid + 1;
-			} else {
-				right = mid;
-			}
-		}
-		return left;
+	// value보다 작은 원소 중 가장 큰 값 바로 오른쪽 위치를 찾음
+	static int lower_bound(int beg, int end, int value, int[] arr) {
+		if(beg == end) return beg; // 기저
+		
+		int mid = (beg + end) >> 1; 
+		if(arr[mid] < value) return lower_bound(mid + 1, end, value, arr);
+		else return lower_bound(beg, mid, value, arr);
 	}
 	
 	static int solution() {
-		int size = 1;
-		int[] lis = new int[N];
-		lis[0] = perm[0];
-		
-		for(int i = 1; i < N; ++i) {
-			if(lis[size - 1] < perm[i]) {
-				lis[size++] = perm[i];
-			} else {
-				int at = lower_bound(perm[i], lis, 0, size - 1);
-				lis[at] = perm[i];
-			}
+		int length = 0; // LIS의 길이
+		for(int i = 0; i < N; ++i) {
+			// A[i]를 마지막 원소로 하는 LIS의 길이를 구함
+			int at = lower_bound(0, length, A[i], buffer);
+			buffer[at] = A[i];
+			length = Math.max(length, at + 1);
 		}
-		return size;
+		return length;
 	}
 	
 	public static void main(String[] args) throws IOException {
-		N = Integer.parseInt(br.readLine());
-		st = new StringTokenizer(br.readLine());
-		for(int i = 0; i < N; ++i) {
-			perm[i] = Integer.parseInt(st.nextToken()); 
-		}
-		bw.append("" + solution()).flush();
+		N = readInt();
+		for(int i = 0; i < N; ++i) A[i] = readInt();
+		System.out.print(solution());
+	}
+	
+	// 부호없는 정수 읽기
+	static int readInt() throws IOException {
+		int c, n = 0;
+		while((c = System.in.read()) < 0x20);
+		n = c & 0x0F;
+		while((c = System.in.read()) >= 0x30) n = (n << 3) + (n << 1) + (c & 0x0F);
+		return n;
 	}
 }
