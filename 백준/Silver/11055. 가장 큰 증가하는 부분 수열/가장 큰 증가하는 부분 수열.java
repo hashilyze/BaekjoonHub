@@ -46,7 +46,6 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		N = readInt();
 		for(int i = 0; i < N; ++i) A[i] = readInt();
-		solution();
 		System.out.print(solution());
 	}
 	
