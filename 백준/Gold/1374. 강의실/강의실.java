@@ -1,5 +1,4 @@
 import java.io.*;
-import java.sql.Array;
 import java.util.*;
 
 public class Main {
@@ -8,28 +7,31 @@ public class Main {
 	static StringBuilder sb = new StringBuilder();
 	static StringTokenizer st;
 	// types
-	static class Node implements Comparable<Node> {
-		int type, time;
+	static class Lecture implements Comparable<Lecture> {
+		int begin, end;
 		
-		Node(int type, int time) {this.type = type; this.time = time;}
+		Lecture(int beg, int end) {this.begin = beg; this.end = end;}
 
 		@Override
-		public int compareTo(Node other) {
-			return this.time != other.time ? this.time - other.time : this.type - other.type;
+		public int compareTo(Lecture other) { // 강의 시작시간 순으로 정렬
+			return this.begin - other.begin;
 		}
 	};
 	// constants
 	// variables
 	static int N;
-	static Node[] nodes = new Node[100_000 << 1];
+	static PriorityQueue<Lecture> pqBeginTime = new PriorityQueue<>();
+	static PriorityQueue<Integer> pqEndTime = new PriorityQueue<>();
 	
 	
 	static int solution() {
-		Arrays.sort(nodes, 0, N << 1);
-		int max = 0, cnt = 0;
-		for(int i = 0, n = N << 1; i < n; ++i) {
-			if(nodes[i].type > 0) ++cnt;
-			else max = Math.max(max, cnt--);
+		int max = 0;
+		while(!pqBeginTime.isEmpty()) { // 강의를 순서대로 진행
+			Lecture lecture = pqBeginTime.poll();
+			// 현재 넣으려는 강의의 시작 시점에 끝나는 강의를 모두 제거
+			while(!pqEndTime.isEmpty() && pqEndTime.peek() <= lecture.begin) pqEndTime.poll();
+			pqEndTime.offer(lecture.end);
+			max = Math.max(max, pqEndTime.size()); // 현재 진행 중인 강의의 수로 최댓값 갱신
 		}
 		return max;
 	}
@@ -37,9 +39,8 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		N = readInt();
 		for(int i = 0; i < N; ++i) {
-			readInt();
-			nodes[i] = new Node(1, readInt());
-			nodes[i + N] = new Node(-1, readInt());
+			readInt(); // 강의실 번호는 불필요
+			pqBeginTime.offer(new Lecture(readInt(), readInt()));
 		}
 		System.out.print(solution());
 	}
