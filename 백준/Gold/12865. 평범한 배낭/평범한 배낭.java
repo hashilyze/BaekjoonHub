@@ -13,20 +13,16 @@ public class Main {
 	// variables
 	static int N, K;
 	static int[] W = new int[MAX_N];
-	static int[] V = new int[MAX_N];
-	// dp[i][j]: 순서대로 i개의 물건 중에서 무게의 합이 j이하가 되도록 선택하였을 때 가치의 최댓값 
-	static int[][] dp = new int[MAX_N + 1][MAX_W + 1];  
+	static int[] V = new int[MAX_N]; 
+	static int[] dp = new int[MAX_W + 1];  
 	
 	static int solution() {
 		for(int i = 0; i < N; ++i) { // item[i]
-			for(int w = 1; w <= K; ++w) {
-				dp[i + 1][w] = dp[i][w]; // i번째 물건을 물건을 선택하지 않음
-				if(w - W[i] >= 0) { // i번째 물건을 물건을 선택함
-					dp[i + 1][w] = Math.max(dp[i + 1][w], dp[i][w - W[i]] + V[i]);
-				}
+			for(int w = K; w >= W[i]; --w) {
+				dp[w] = Math.max(dp[w], dp[w - W[i]] + V[i]);
 			}
 		}
-		return dp[N][K];
+		return dp[K];
 	}
 	
 	public static void main(String[] args) throws IOException {
