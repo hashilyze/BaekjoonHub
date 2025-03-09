@@ -2,57 +2,58 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+	// Input Handler
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder sb = new StringBuilder();
-	static StringTokenizer st = null;
+	static StringTokenizer st;
 	// types
-	static class Lecture implements Comparable<Lecture>{
-		int type;
-		int time;
+	static class Lecture implements Comparable<Lecture> {
+		int begin, end;
 		
-		Lecture(){ }
-		Lecture(int type, int time){ this.type = type; this.time = time; }
-		
+		Lecture(int beg, int end) {this.begin = beg; this.end = end;}
+
 		@Override
-		public int compareTo(Lecture other) { // 시간의 오름차순; 유형 순 정렬
-			if(this.time != other.time) return this.time - other.time;
-			return this.type - other.type;
+		public int compareTo(Lecture other) { // 강의 시작 시각 순으로 정렬
+			return this.begin - other.begin;
 		}
 	};
 	// constants
-	static final int SIZE = 200_000;
 	// variables
 	static int N;
-	static Lecture[] lectures = new Lecture[SIZE << 1];
+	static PriorityQueue<Lecture> pqBeginTime = new PriorityQueue<>();
+	static PriorityQueue<Integer> pqEndTime = new PriorityQueue<>();
+	
 	
 	static int solution() {
-		Arrays.sort(lectures, 0, N << 1);
-		
-		int max = 0, cnt = 0;
-		for(int i = 0; i < (N << 1); ++i) {
-			if(lectures[i].type > 0) ++cnt;
-			else max = Math.max(max, cnt--);
+		int max = 0;
+		while(!pqBeginTime.isEmpty()) { // 강의를 순서대로 진행
+			Lecture lecture = pqBeginTime.poll();
+			// 현재 넣으려는 강의의 시작 시점에 끝나는 강의를 모두 제거
+			while(!pqEndTime.isEmpty() && pqEndTime.peek() <= lecture.begin) {
+				pqEndTime.poll();
+			} 
+			pqEndTime.offer(lecture.end);
+			
+			// 현재 진행 중인 강의의 수로 최댓값 갱신
+			max = Math.max(max, pqEndTime.size()); 
 		}
 		return max;
 	}
+	
 	public static void main(String[] args) throws IOException {
 		N = readInt();
 		for(int i = 0; i < N; ++i) {
-			// 동일한 시점에서 한 강의가 끝나고 다른 강의가 시작하면 강의실은 하나만 필요 -> 겹치지 않음
-			lectures[i] = new Lecture(1, readInt()); // 강의 시작 시간
-			lectures[i + N] = new Lecture(-1, readInt()); // 강의 종료 시간
+			pqBeginTime.offer(new Lecture(readInt(), readInt()));
 		}
-		System.out.println(solution());
+		System.out.print(solution());
 	}
 	
 	// 부호없는 정수 읽기
 	static int readInt() throws IOException {
 		int c, n = 0;
-		while((c = System.in.read()) < 0x20);
+		while((c = System.in.read()) <= 0x20);
 		n = c & 0x0F;
-		while((c = System.in.read()) >= 0x30) {
-			n = (n << 3) + (n << 1) + (c & 0x0F);
-		}
+		while((c = System.in.read()) >= 0x30) n = (n << 3) + (n << 1) + (c & 0x0F);
 		return n;
 	}
 }
