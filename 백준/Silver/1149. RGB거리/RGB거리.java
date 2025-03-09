@@ -8,7 +8,6 @@ public class Main {
 	static StringTokenizer st;
 	// types
 	// constants
-	static final int MAX_N = 1_000;
 	static final int SIZE = 3;
 	// variables
 	static int N;
@@ -25,7 +24,7 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		N = readInt();
-		for(int i = 0; i < N; ++i) {
+		while(N-- > 0) {
 			update(readInt(), readInt(), readInt());
 		}
 		System.out.print(Math.min(Math.min(dp[0], dp[1]), dp[2]));
