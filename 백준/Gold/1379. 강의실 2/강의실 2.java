@@ -23,7 +23,7 @@ public class Main {
 		Room(int room, int end) {this.room = room; this.end = end;}
 
 		@Override
-		public int compareTo(Room other) { // 강의 시작시간 순으로 정렬
+		public int compareTo(Room other) { // 강의가 끝나는 순으로 정렬
 			return this.end - other.end;
 		}
 	};
@@ -44,9 +44,9 @@ public class Main {
 			Lecture lecture = pqBeginTime.poll();
 			// 현재 넣으려는 강의의 시작 시점에 끝나는 강의를 모두 제거
 			while(!pqEndTime.isEmpty() && pqEndTime.peek().end <= lecture.begin) {
-				watingRooms.offer(pqEndTime.poll().room);
+				watingRooms.offer(pqEndTime.poll().room); // 빈 강의실을 큐에 대기
 			}
-			rooms[lecture.no - 1] = watingRooms.poll();
+			rooms[lecture.no - 1] = watingRooms.poll(); // 빈 강의실 중 가장 번호가 작은 것을 할당 
 			pqEndTime.offer(new Room(rooms[lecture.no - 1], lecture.end));
 			
 			// 현재 진행 중인 강의의 수로 최댓값 갱신
