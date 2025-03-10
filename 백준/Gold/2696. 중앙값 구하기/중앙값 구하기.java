@@ -22,7 +22,7 @@ public class Main {
 			int N = readInt();
 			sb.append((N >> 1) + 1).append("\n"); // 홀수번째 마다 중앙값을 출력하므로 N이하의 홀수 개수
 			
-			for(int i = 0; i < N; ++i) {
+			for(int i = 1; i <= N; ++i) {
 				// 새로운 값을 두 힙 중 하나에 저장
 				int val = readInt();
 				if(leftHeap.isEmpty() || leftHeap.peek() < val) rightHeap.offer(val);
@@ -32,13 +32,9 @@ public class Main {
 				while(leftHeap.size() + 1 > rightHeap.size()) rightHeap.offer(leftHeap.poll());
 				
 				// 중앙값 출력
-				if(i % 2 == 0) {
-					sb.append(rightHeap.peek());
-					if(i != 0 && i % 18 == 0) {	
-						sb.append("\n");
-					} else {
-						sb.append(" ");
-					}
+				if(i % 2 == 1) {
+					sb.append(rightHeap.peek())
+						.append(i % 20 == 0 ? "\n" : " ");
 				}
 			}
 			sb.append("\n");
