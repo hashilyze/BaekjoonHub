@@ -10,58 +10,61 @@ public class Main {
 	static StringTokenizer st = null;
 	// types
 	// constants
-	static int SIZE = 1_000_000 + 10;
+	static int SIZE = 1_000_000;
 	// variables
 	static int N, M, K;
 	static long[] arr = new long[SIZE];
-	static long[] seg = new long[SIZE << 2];
+	static long[] segment = new long[SIZE << 2];
 	
 	
-	static long initSegment(int left, int right, int index) {
-		if(left == right) return seg[index] = arr[left];
+	static long initSegment(int queryL, int queryR, int index) {
+		if(queryL == queryR) return segment[index] = arr[queryL];
 		
-		int mid = (left + right) >> 1;
-		long lhs = initSegment(left, mid, index * 2 + 1);
-		long rhs = initSegment(mid + 1, right, index * 2 + 2);
-		return seg[index] = lhs + rhs;
+		int mid = (queryL + queryR) >> 1;
+		long lhs = initSegment(queryL, mid, index * 2 + 1);
+		long rhs = initSegment(mid + 1, queryR, index * 2 + 2);
+		return segment[index] = lhs + rhs;
 	}
-	static long querySegment(int left, int right, int index, int lo, int  hi) {
-		if(hi < left || right < lo) return 0;
-		if(left <= lo && hi <= right) return seg[index];
+	
+	static long querySegment(int queryL, int queryR, int index, int segmentL, int segmentR) {
+		if(segmentR < queryL || queryR < segmentL) return 0L;
+		if(queryL <= segmentL && segmentR <= queryR) return segment[index];
 		
-		int mid = (lo + hi) >> 1;
-		long lhs = querySegment(left, right, index * 2 + 1, lo, mid);
-		long rhs = querySegment(left, right, index * 2 + 2, mid + 1, hi);
+		int mid = (segmentL + segmentR) >> 1;
+		long lhs = querySegment(queryL, queryR, index * 2 + 1, segmentL, mid);
+		long rhs = querySegment(queryL, queryR, index * 2 + 2, mid + 1, segmentR);
 		return lhs + rhs;
 	}
-	static long updateSegment(int pos, long val, int index, int lo, int hi) {
-		if(pos < lo || hi < pos) return seg[index];
-		if(pos == lo && hi == pos) return seg[index] = arr[pos] = val;
-		
-		int mid = (lo + hi) >> 1;
-		long lhs = updateSegment(pos, val, index * 2 + 1, lo, mid);
-		long rhs = updateSegment(pos, val, index * 2 + 2, mid + 1, hi);
-		return seg[index] = lhs + rhs;
-	}
 	
+	static long updateSegment(int pos, long val, int index, int segmentL, int segmentR) {
+		if(pos < segmentL || segmentR < pos) return segment[index];
+		if(segmentL == segmentR && segmentL == pos) return segment[index] = arr[pos] = val;
+		
+		int mid = (segmentL + segmentR) >> 1;
+		long lhs = updateSegment(pos, val, index * 2 + 1, segmentL, mid);
+		long rhs = updateSegment(pos, val, index * 2 + 2, mid + 1, segmentR);
+		return segment[index] = lhs + rhs;
+	}
 	
 	public static void main(String[] args) throws IOException {
 		N = (int)readLong();
 		M = (int)readLong();
 		K = (int)readLong();
 		for(int i = 0; i < N; ++i) arr[i] = readLong();
-		initSegment(0, N - 1, 0);
 		
+		initSegment(0, N - 1, 0);
 		for(int i = 0; i < M + K; ++i) {
 			int a = (int)readLong();
 			long b = readLong(), c = readLong();
-			
-			switch(a) {
-			case 1: updateSegment((int)b - 1, c, 0, 0, N - 1); break;
-			case 2: sb.append(querySegment((int)b - 1, (int)c - 1, 0, 0, N - 1)).append("\n"); break;
+			if(a == 1) {
+				updateSegment((int)b - 1, c, 0, 0, N - 1);
+			} else {
+				sb.append(querySegment((int)b - 1, (int)c - 1, 0, 0, N - 1))
+					.append("\n");
 			}
 		}
 		System.out.print(sb);
+		
 	}
 	
 	// 정수 입력 
