@@ -11,16 +11,18 @@ public class Main {
 	// types
 	static class Node{
 		boolean isWord = false;
-		int[] next = new int[SIZE];
+		int[] next = new int[RANGE];
 		
 		Node() {}
 	}
 	// constants
-	static int SIZE = 10;
+	static final int RANGE = 10;
+	static final int MAX_N = 10_000;
+	static final int LENGTH = 10;
 	// variables
 	static int N;
 	static int size = 0;
-	static Node[] pool = new Node[1_000_000];
+	static Node[] pool = new Node[MAX_N * LENGTH + 1]; // 트라이의 노드 수는 (단어의 수) * (단어의 길이)
 	static Node root = null;
 	
 	public static void main(String[] args) throws IOException {
