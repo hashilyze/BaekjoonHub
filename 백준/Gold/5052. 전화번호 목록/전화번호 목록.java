@@ -10,11 +10,10 @@ public class Main {
 	static StringTokenizer st = null;
 	// types
 	static class Node{
-		int digit = -1;
 		boolean isWord = false;
 		int[] next = new int[SIZE];
 		
-		Node(int digit, boolean isWord) {this.digit=digit;this.isWord=isWord;}
+		Node() {}
 	}
 	// constants
 	static int SIZE = 10;
@@ -29,23 +28,26 @@ public class Main {
 			boolean flag = true;
 			N = Integer.parseInt(br.readLine());
 			pool.clear();
-			pool.add(root = new Node(-1, false));
+			pool.add(root = new Node());
 			
 			for(int i = 0; i < N; ++i) {
 				int cursor = 0;
+				Node node = root; 
 				char[] numbers = br.readLine().toCharArray();
+				
 				for(int j = 0; j < numbers.length; ++j) {
 					int digit = numbers[j] & 0x0F;
-					if(pool.get(cursor).next[digit] == 0) { // 노드 추가
-						pool.get(cursor).next[digit] = pool.size();
-						pool.add(new Node(digit, false));
-					} else {
+					if(node.next[digit] == 0) { // 노드 추가
+						node.next[digit] = pool.size();
+						pool.add(new Node());
+					} else { // 이미 존재
 						if(j + 1 == numbers.length) flag = false; // 추가하는 번호가 다른 번호의 접두사
 					}
-					cursor = pool.get(cursor).next[digit];
-					if(pool.get(cursor).isWord) flag = false;
+					cursor = node.next[digit];
+					node = pool.get(cursor);
+					if(node.isWord) flag = false;
 				}
-				pool.get(cursor).isWord = true;
+				node.isWord = true;
 			}
 			sb.append(flag ? "YES\n" : "NO\n");
 		}
