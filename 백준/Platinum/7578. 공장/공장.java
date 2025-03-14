@@ -12,7 +12,7 @@ public class Main {
 	// variables
 	static int N;
 	static int[] idToPos = new int[SIZE]; // A열에 위치한 식별번호가 i인 기계의 위치 
-	static long[] segment = new long[SIZE << 4];
+	static long[] segment = new long[SIZE << 2];
 	
 	static long querySegment(int queryL, int queryR, int rangeL, int rangeR, int index) {
 		if(rangeR < queryL || queryR < rangeL) return 0L;
