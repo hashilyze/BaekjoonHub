@@ -19,17 +19,19 @@ public class Main {
 	static int SIZE = 10;
 	// variables
 	static int N;
-	static List<Node> pool = new ArrayList<Node>(1_000_000);
+	static int size = 0;
+	static Node[] pool = new Node[1_000_000];
 	static Node root = null;
 	
 	public static void main(String[] args) throws IOException {
 		int T = Integer.parseInt(br.readLine());
 		while(T-- > 0) {
-			boolean flag = true;
 			N = Integer.parseInt(br.readLine());
-			pool.clear();
-			pool.add(root = new Node());
+			Arrays.fill(pool, 0, size, null);
+			size = 0;
 			
+			boolean flag = true;
+			pool[size++] = (root = new Node());
 			for(int i = 0; i < N; ++i) {
 				int cursor = 0;
 				Node node = root; 
@@ -38,13 +40,13 @@ public class Main {
 				for(int j = 0; j < numbers.length; ++j) {
 					int digit = numbers[j] & 0x0F;
 					if(node.next[digit] == 0) { // 노드 추가
-						node.next[digit] = pool.size();
-						pool.add(new Node());
+						node.next[digit] = size;
+						pool[size++] = (new Node());
 					} else { // 이미 존재
 						if(j + 1 == numbers.length) flag = false; // 추가하는 번호가 다른 번호의 접두사
 					}
 					cursor = node.next[digit];
-					node = pool.get(cursor);
+					node = pool[cursor];
 					if(node.isWord) flag = false;
 				}
 				node.isWord = true;
