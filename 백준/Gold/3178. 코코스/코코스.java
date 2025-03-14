@@ -20,7 +20,6 @@ public class Main {
 	static Node[] leftPool = new Node[LENGTH * NUM + 10];
 	static Node[] rightPool = new Node[LENGTH * NUM + 10];
 	static int cnt = 0;
-	static int leftLeafCnt = 0, rightLeafCnt = 0;
 	
 	
 	static void init() {
@@ -37,7 +36,6 @@ public class Main {
 				leftPool[leftSize++] = new Node();
 				
 				++cnt;
-				if(i + 1 == K) ++leftLeafCnt;
 			}
 			node = leftPool[node.next[id]];
 		}
@@ -52,7 +50,6 @@ public class Main {
 				rightPool[rightSize++] = new Node();
 				
 				++cnt;
-				if(i + 1 == K) ++rightLeafCnt;
 			}
 			node = rightPool[node.next[id]];
 		}
