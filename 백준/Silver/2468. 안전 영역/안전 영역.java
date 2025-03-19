@@ -19,6 +19,7 @@ public class Main {
 	static int N;
 	static int[][] mat = new int[MAX_N][MAX_N];
 	static boolean[][] isVisited = new boolean[MAX_N][MAX_N];
+	static int lower = Integer.MAX_VALUE, upper = Integer.MIN_VALUE;
 	
 	
 	static boolean inRange(int y, int x) {
@@ -47,7 +48,7 @@ public class Main {
 	
 	static int solution() {
 		int max = 1; // 아무 지역도 물에 잠기지 않았을 때의 영역 개수
-		for(int d = 1; d <= 100; ++d) {
+		for(int d = lower; d <= upper; ++d) {
 			// 방문 배열 초기화
 			for(int y = 0; y < N; ++y) Arrays.fill(isVisited[y], 0, N, false);
 			// 영역 개수 세기
@@ -68,7 +69,9 @@ public class Main {
 		N = readInt();
 		for(int y = 0; y < N; ++y) {
 			for(int x = 0; x < N; ++x) {
-				mat[y][x] = readInt();
+				int v = mat[y][x] = readInt();
+				lower = Math.min(lower, v);
+				upper = Math.max(upper, v);
 			}
 		}
 		System.out.println(solution());
