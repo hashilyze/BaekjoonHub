@@ -9,12 +9,6 @@ public class Solution {
 	// types
 	// constants
 	static int MAX_N = 20;
-//	static int[][] DELTA = {
-//			{ 1,  1},
-//			{ 1, -1},
-//			{-1, -1},
-//			{-1,  1},
-//	};
 	// variables
 	static int N;
 	static int[][] mat = new int[MAX_N][MAX_N];
@@ -34,7 +28,6 @@ public class Solution {
 	
 	static void dfsBL(int ay, int ax, int tr, int br, int bl) {
 		int y = ay + tr - br - bl, x = ax + tr + br - bl;
-		//if(!inRange(y, x)) return; // 범위 이탈
 		if(!S.add(mat[y][x])) return; // 두 번 방문하는 카페가 존재
 		
 		if(bl < tr) dfsBL(ay, ax, tr, br, bl + 1);
@@ -68,8 +61,8 @@ public class Solution {
 	
 	static int solution() {
 		max = -1;
-		for(int y = 0; y < N; ++y) {
-			for(int x = 0; x < N; ++x) {
+		for(int y = 1; y < N - 1; ++y) {
+			for(int x = 0; x < N - 2; ++x) {
 				dfsTR(y, x, 1);
 			}
 		}
