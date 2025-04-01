@@ -37,14 +37,15 @@ public class Solution {
 			for(int x1 = 0; x1 < N - M + 1; ++x1) {
 				int honey1 = knapsack(y1, x1, x1 + M);
 				
-				for(int y2 = y1; y2 < N; ++y2) {
+				for(int x2 = x1 + M; x2 < N - M + 1; ++x2) {
+					int honey2 = knapsack(y1, x2, x2 + M);
+					max = Math.max(max, honey1 + honey2);
+				}
+				
+				for(int y2 = y1 + 1; y2 < N; ++y2) {
 					for(int x2 = 0; x2 < N - M + 1; ++x2) {
 						int honey2 = knapsack(y2, x2, x2 + M);
-						
-						if(y1 != y2 || (x1 + M - 1 < x2 || x2 + M - 1 < x1)) {
-							max = Math.max(max, honey1 + honey2);
-						}
-						
+						max = Math.max(max, honey1 + honey2);
 					}
 				}
 				
