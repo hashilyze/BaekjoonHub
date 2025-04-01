@@ -1,12 +1,30 @@
 import java.io.*;
 import java.util.*;
  
+/**
+ * 메모리: 25,856KB
+ * 시간: 91ms
+ * @author 배준수
+ */
 public class Solution {
     // IO Handler
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st = null;
     // types
+    static class Node implements Comparable<Node>{
+    	int val, y, x;
+    	boolean isbind;
+    	
+		public Node(int val, int y, int x) {
+			this.val = val;
+			this.y = y;
+			this.x = x;
+		}
+
+		@Override
+		public int compareTo(Node o) { return o.val - this.val; }
+    }
     // constants
     static final int MAX_N = 10;
     static final int MAX_M = 5;
@@ -15,6 +33,8 @@ public class Solution {
     static int N, M, C;
     static int[][] mat = new int[MAX_N][MAX_N];
     static int[][] dp = new int[MAX_M + 1][MAX_C + 1];
+    static PriorityQueue<Node> pq = new PriorityQueue<>();
+    static Node[] buffer = new Node[MAX_N * MAX_N >> 1];
      
     static int pow2(int v) {return v * v;}
     
@@ -29,26 +49,38 @@ public class Solution {
     	}
         return dp[M][C];
     }
-     
+    
+    static void insert(Node node) {
+    	for(int i = 0; i < buffer.length; ++i) {
+    		if(buffer[i] == null) {
+    			buffer[i] = node;
+    			break;
+    		}
+    		if(buffer[i].isbind == true) continue;
+    		if(buffer[i].y != node.y || (node.x + M - 1 < buffer[i].x || buffer[i].x + M - 1 < node.x)) {
+    			buffer[i].val += node.val;
+    			buffer[i].isbind = true;
+    		}
+    	}
+    }
+    
     static int solution() {
-        int max = 0;
-        for(int y1 = 0; y1 < N; ++y1) {
-            for(int x1 = 0; x1 < N - M + 1; ++x1) {
-                int honey1 = knapsack(y1, x1);
-                 
-                for(int x2 = x1 + M; x2 < N - M + 1; ++x2) {
-                    int honey2 = knapsack(y1, x2);
-                    max = Math.max(max, honey1 + honey2);
-                }
-                 
-                for(int y2 = y1 + 1; y2 < N; ++y2) {
-                    for(int x2 = 0; x2 < N - M + 1; ++x2) {
-                        int honey2 = knapsack(y2, x2);
-                        max = Math.max(max, honey1 + honey2);
-                    }
-                }
-                 
+    	pq.clear();
+        for(int y = 0; y < N; ++y) {
+            for(int x = 0; x < N - M + 1; ++x) {
+                int honey = knapsack(y, x);
+                pq.offer(new Node(honey, y, x));             
             }
+        }
+        
+        Arrays.fill(buffer, null);
+        for(int i = 0; i < N; ++i) {
+        	insert(pq.poll());
+        }
+        int max = 0;
+        for(int i = 0; i < N * N; ++i) {
+        	if(buffer[i] == null) break;
+        	max = Math.max(max, buffer[i].val);
         }
         return max;
     }
