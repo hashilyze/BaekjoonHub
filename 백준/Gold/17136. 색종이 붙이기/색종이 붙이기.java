@@ -37,13 +37,14 @@ public class Main {
 	
 	
 	static void dfs(int y, int x, int cnt) {
-		if(y == 10 && x == 0) {
+		if(y == 9 && x == 10) {
 			min = Math.min(min, cnt);
 			return;
 		}
-		
-		int ny = y + (x + 1) / SIZE;
-		int nx = (x + 1) % SIZE;
+		if(x == 10) {
+			y += 1;
+			x = 0;
+		}
 		if(((mat[y] >> x) & 1) == 1) {
 			for(int p = 0; p < PAPER_NUM; ++p) {
 				if(papers[p] == 0) continue;
@@ -51,12 +52,12 @@ public class Main {
 				
 				--papers[p];
 				setZero(y, x, p);
-				dfs(ny, nx, cnt + 1);
+				dfs(y, x + 1, cnt + 1);
 				setOne(y, x, p);
 				++papers[p];
 			}
 		} else {
-			dfs(y + (x + 1) / SIZE, (x + 1) % SIZE, cnt);
+			dfs(y, x + 1, cnt);
 		}
 	}
 	
@@ -74,6 +75,7 @@ public class Main {
     static int readInt() throws IOException {
     	int c, n = 0;
     	while((c = System.in.read()) >= 0x30) n = (n << 3) + (n << 1) + (c & 0x0F);
+    	if(c == '\r') System.in.read();
     	return n;
     }
 }
