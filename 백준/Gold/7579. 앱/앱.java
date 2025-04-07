@@ -19,7 +19,7 @@ public class Main {
     	for(int i = 0; i < N; ++i) memories[i] = readInt();
     	for(int i = 0; i < N; ++i) costs[i] = readInt();
     	
-    	Arrays.fill(dp, INF);
+    	Arrays.fill(dp, 0, M + 1, INF);
     	for(int i = 0 ; i < N; ++i) {
     		for(int j = M; j > memories[i]; --j) dp[j] = Math.min(dp[j], dp[j - memories[i]] + costs[i]);
     		for(int j = Math.min(memories[i], M); j >= 0; --j) dp[j] = Math.min(dp[j], costs[i]);
