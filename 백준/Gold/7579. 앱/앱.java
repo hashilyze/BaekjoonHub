@@ -6,11 +6,12 @@ public class Main {
 	// constants
 	static int MAX_N = 100;
 	static int MAX_M = 10_000_000;
+	static int INF = 101 * 100;
 	// variables
 	static int N, M;
 	static int[] memories = new int[MAX_N];
 	static int[] costs = new int[MAX_N];
-	static long[] dp; // j이상의 메모리를 얻을 수 있는 최소 비용
+	static int[] dp = new int[MAX_M + 1]; // j이상의 메모리를 얻을 수 있는 최소 비용
 	
     public static void main(String[] args) throws IOException {
     	N = readInt();
@@ -18,8 +19,7 @@ public class Main {
     	for(int i = 0; i < N; ++i) memories[i] = readInt();
     	for(int i = 0; i < N; ++i) costs[i] = readInt();
     	
-    	dp = new long[M + 1];
-    	Arrays.fill(dp, Integer.MAX_VALUE);
+    	Arrays.fill(dp, INF);
     	for(int i = 0 ; i < N; ++i) {
     		for(int j = M; j > memories[i]; --j) dp[j] = Math.min(dp[j], dp[j - memories[i]] + costs[i]);
     		for(int j = Math.min(memories[i], M); j >= 0; --j) dp[j] = Math.min(dp[j], costs[i]);
