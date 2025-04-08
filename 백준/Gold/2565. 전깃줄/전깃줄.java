@@ -6,7 +6,7 @@ public class Main {
 	// constants 
 	static final int SIZE = 500;
 	// variables
-	static int N;
+	static int N, limit;
 	static int[] A = new int[SIZE + 1];
 	static int len = 0;
 	static int[] buffer = new int[SIZE + 1];
@@ -21,7 +21,7 @@ public class Main {
 	}
 	
 	static int solution() {
-		for(int i = 0; i <= SIZE; ++i) {
+		for(int i = 0; i <= limit; ++i) {
 			int at = lowerBound(0, len, A[i]);
 			buffer[at] = A[i];
 			if(at == len) ++len;
@@ -32,7 +32,9 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		N = readInt();
 		for(int i = 0; i < N; ++i) {
-			A[readInt()] = readInt();
+			int s = readInt(), e = readInt();
+			A[s] = e;
+			limit = Math.max(s, limit);
 		}
 		System.out.println(solution());
     }
