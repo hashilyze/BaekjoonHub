@@ -22,13 +22,11 @@ public class Main {
 	
 	static int solution() {
 		for(int i = 0; i <= SIZE; ++i) {
-			if(A[i] == 0) continue;
-			
 			int at = lowerBound(0, len, A[i]);
 			buffer[at] = A[i];
 			if(at == len) ++len;
 		}
-		return N - len;
+		return N - len + 1;
 	}
 	
 	public static void main(String[] args) throws IOException {
