@@ -6,23 +6,26 @@ public class Main {
 	// constants
 	// variables
 	static int C, N;
-	static int[] dp = new int[100 * 1000 + 1]; // dp[i]: 비용 i로 늘릴 수 있는 최대 고객 수
+	static int[] dp = new int[1000 + 101]; // dp[i]: 고객 i명을 모집하기 위한 최소 비용
 	
 	
 	public static void main(String[] args) throws IOException {
 		C = readInt(); N = readInt();
 		while(N-- > 0) {
 			int cost = readInt(), customer = readInt();
-			for(int i = cost; i < dp.length; ++i) {
-				dp[i] = Math.max(dp[i], dp[i - cost] + customer);
+			
+			dp[customer] = Math.min(cost, dp[customer] == 0 ? Integer.MAX_VALUE : dp[customer]);
+			for(int i = customer+1; i <= C + 100; ++i) {
+				if(dp[i - customer] != 0) {
+					dp[i] = Math.min(dp[i - customer] + cost, dp[i] == 0 ? Integer.MAX_VALUE : dp[i]);
+				}
 			}
 		}
-		for(int i = 0; i < dp.length; ++i) {
-			if(dp[i] >= C) {
-				System.out.print(i);
-				break;
-			}
+		int min = Integer.MAX_VALUE;
+		for(int i = C; i <= C + 100; ++i) {
+			min = Math.min(min, dp[i] == 0 ? Integer.MAX_VALUE : dp[i]);
 		}
+		System.out.println(min);
     }
     
     static int readInt() throws IOException {
