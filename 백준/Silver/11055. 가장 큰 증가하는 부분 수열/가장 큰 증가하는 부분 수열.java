@@ -6,39 +6,38 @@ public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder sb = new StringBuilder();
 	static StringTokenizer st;
+	// types
 	// constants
-	static final int MAX_N = 1_000;
-	// variables
+	// variables	
 	static int N;
-	static int[] A = new int[MAX_N];
-	static int[] buffer = new int[MAX_N]; // LIS 생성에 이용하는 버퍼; buffer[i]: LIS길이가 (i+1)인 가장 마지막 원소의 인덱스
-	static int[] dpAcc = new int[MAX_N];
+	static int[] A = new int[1_000];
+	static int len;
+	static int[] buffer = new int[1_000];
+	static int[] dp = new int[1_000]; // A[i]를 마지막 원소로 하는 LIS의 원소 합 
 	
-	static int lower_bound(int beg, int end, int val) {
-		while(beg != end) {
-			int mid = (beg + end) >> 1;
-			if(buffer[mid] < val) beg = mid + 1;
-			else end = mid;
+	
+	static int lowerBound(int lo, int hi, int key) {
+		while(lo < hi) {
+			int mid = (lo + hi) >> 1;
+			if(A[buffer[mid]] < key) lo = mid + 1;
+			else hi = mid;
 		}
-		return beg;
+		return lo;
 	}
 	
 	static int solution() {
-		int length = 0; // LIS의 길이
 		int max = 0;
-		for(int i = 0; i < N; ++i) { 
-			int at = lower_bound(0, length, A[i]); // 마지막 원소가 A[i]인 LIS의 길이 찾기 
-			buffer[at] = A[i];
-			if(at == 0) dpAcc[i] = A[i];
+		for(int i = 0; i < N; ++i) {
+			int at = lowerBound(0, len, A[i]);
+			if(at == len) ++len;
+			buffer[at] = i;
+			if(at == 0) dp[i] = A[i];
 			else {
 				for(int j = 0; j < i; ++j) {
-					if(A[j] < A[i]) {
-						dpAcc[i] = Math.max(dpAcc[i], dpAcc[j] + A[i]);
-					}
+					if(A[j] < A[i]) dp[i] = Math.max(dp[i], dp[j] + A[i]);
 				}
 			}
-			length = Math.max(length, at + 1);
-			max = Math.max(max, dpAcc[i]);
+			max = Math.max(max, dp[i]);
 		}
 		return max;
 	}
@@ -49,12 +48,14 @@ public class Main {
 		System.out.print(solution());
 	}
 	
-	// 부호없는 정수 읽기
 	static int readInt() throws IOException {
-		int c, n = 0;
-		while((c = System.in.read()) <= 0x20);
-		n = c & 0x0F;
+		int c, n = System.in.read() & 0x0F, s = 1;
+		if(n == ('-' & 0x0F)) {
+			s = -1;
+			n = 0;
+		}
 		while((c = System.in.read()) >= 0x30) n = (n << 3) + (n << 1) + (c & 0x0F);
-		return n;
+		if(c == '\r') System.in.read();
+		return n*s;
 	}
 }
