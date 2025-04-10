@@ -12,7 +12,7 @@ public class Main {
 	static int MAX_N = 500;
 	static int MAX_M = 2_500;
 	static int MAX_W = 200;
-	static int INF = Integer.MAX_VALUE >> 1;
+	static int INF = (MAX_N + 1) * 10_000;
 	// variables
 	static int N, M, W;
 	static Edge[] edges = new Edge[2*MAX_M + MAX_W];
@@ -26,7 +26,7 @@ public class Main {
 				Edge edge = edges[j];
 				if(distances[edge.e] > distances[edge.s] + edge.w) {
 					distances[edge.e] = distances[edge.s] + edge.w;
-					if(i == N - 1) return true;
+					if(i == N - 1) return true; // 음의 사이클이 존재한다면, N번째 루프에서도 최단 거리가 감소
 				}
 			}
 		}
