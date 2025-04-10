@@ -9,28 +9,29 @@ public class Main {
 	// types
 	// constants
 	// variables
-	static String T, P;
-	static int[] pi;
+	static char[] T, P;
 	static List<Integer> ans = new ArrayList<>();
 	
-	static void makePi() {
-		int n = P.length();
-		pi = new int[n];
+	static int[] getPi() {
+		int n = P.length;
+		int[] pi = new int[n];
 		
 		int matched = 0;
 		for(int next = 1; next < n; ++next) {
-			while(matched > 0 && P.charAt(next) != P.charAt(matched)) matched = pi[matched - 1];
-			if(P.charAt(next) == P.charAt(matched)) pi[next] = ++matched;
+			while(matched > 0 && P[next] != P[matched]) matched = pi[matched - 1];
+			if(P[next] == P[matched]) pi[next] = ++matched;
 		}
+		return pi;
 	}
 	
 	static void kmp() {
-		int txtLength = T.length(), patLength = P.length();
-		makePi();
+		int txtLength = T.length, patLength = P.length;
+		int[] pi = getPi();
+		
 		int matched = 0;
 		for(int next = 0; next < txtLength; ++next) {
-			while(matched > 0 && T.charAt(next) != P.charAt(matched)) matched = pi[matched - 1];
-			if(T.charAt(next) == P.charAt(matched) && ++matched == patLength) {
+			while(matched > 0 && T[next] != P[matched]) matched = pi[matched - 1];
+			if(T[next] == P[matched] && ++matched == patLength) {
 				ans.add(next - matched + 1);
 				matched = pi[matched - 1];
 			}
@@ -40,8 +41,8 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		// Input
-		T = br.readLine();
-		P = br.readLine();
+		T = br.readLine().toCharArray();
+		P = br.readLine().toCharArray();
 		
 		kmp();
 		// Output
