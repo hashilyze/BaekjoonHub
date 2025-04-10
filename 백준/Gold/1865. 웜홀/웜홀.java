@@ -12,6 +12,7 @@ public class Main {
 	static int MAX_N = 500;
 	static int MAX_M = 2_500;
 	static int MAX_W = 200;
+	static int INF = Integer.MAX_VALUE >> 1;
 	// variables
 	static int N, M, W;
 	static Edge[] edges = new Edge[2*MAX_M + MAX_W];
@@ -19,18 +20,13 @@ public class Main {
 	
 	
 	static boolean solution() {
-		Arrays.fill(distances, 1, N + 1, Integer.MAX_VALUE);
-		for(int v = 1; v <= N; ++v) {
-			if(distances[v] != Integer.MAX_VALUE) continue;
-			distances[v] = 0;
-			
-			for(int i = 0; i < N; ++i) {
-				for(int j = 0; j < 2*M + W; ++j) {
-					Edge edge = edges[j];
-					if(distances[edge.s] != Integer.MAX_VALUE && distances[edge.e] > distances[edge.s] + edge.w) {
-						distances[edge.e] = distances[edge.s] + edge.w;
-						if(i == N - 1) return true;
-					}
+		Arrays.fill(distances, 1, N + 1, INF);
+		for(int i = 0; i < N; ++i) {
+			for(int j = 0; j < 2*M + W; ++j) {
+				Edge edge = edges[j];
+				if(distances[edge.e] > distances[edge.s] + edge.w) {
+					distances[edge.e] = distances[edge.s] + edge.w;
+					if(i == N - 1) return true;
 				}
 			}
 		}
