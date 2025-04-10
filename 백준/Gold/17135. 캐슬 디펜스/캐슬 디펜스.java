@@ -54,9 +54,10 @@ public class Main {
 		
 		// 초기화
 		for(int y = 0; y< N; ++y) {
-			for(int x = 0; x< M; ++x) {
-				field[y][x] = mat[y][x];
-			}
+			System.arraycopy(mat[y], 0, field[y], 0, M);
+//			for(int x = 0; x< M; ++x) {
+//				field[y][x] = mat[y][x];
+//			}
 		}
 		List<int[]> afterKill = new ArrayList<>();
 		for(int y = N; y > endLine; --y) { // 가장 마지막 적과 같은 라인에 도달할 때까지 병사가 전진
