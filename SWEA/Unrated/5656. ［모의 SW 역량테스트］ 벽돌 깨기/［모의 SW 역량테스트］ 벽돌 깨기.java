@@ -2,100 +2,99 @@ import java.io.*;
 import java.util.*;
 
 public class Solution {
-	// IO Hanlder
+	// Input Handler
+	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder sb = new StringBuilder();
+	static StringTokenizer st;
 	// types
-	static int[][] DELTA = { {1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 	// constants
 	static final int MAX_N = 4;
 	static final int MAX_W = 12;
 	static final int MAX_H = 15;
-	// variabels
+	static int[][] DELTA = {
+			{ 1,  0}, 
+			{-1,  0}, 
+			{ 0,  1}, 
+			{ 0, -1},
+		};
+	// variables
 	static int N, W, H;
 	static int[][][] mat = new int[MAX_N + 1][MAX_H][MAX_W];
 	
 	
-	static int explode(int lv, int ty, int tx) {
-		int cnt = 0;
-		int range = mat[lv][ty][tx]; // 폭파 반경
-		if(range > 0) {
-			cnt = 1;
-			mat[lv][ty][tx] = 0;
-		}
+	static int explode(int nth, int by, int bx) {
+		int range = mat[nth][by][bx];
+		if(range == 0) return 0; // 벽돌이 없음
 		
-		for(int d = 0; d < DELTA.length; ++d) {
+		int cnt = 1;
+		mat[nth][by][bx] = 0;
+		
+		// 폭발 반경만큼 벽돌 제거
+		for(int d = 0; d < DELTA.length; ++d) { 
 			for(int r = 1; r < range; ++r) {
-				int nx = tx + r * DELTA[d][0];
-				int ny = ty + r * DELTA[d][1];
-				
-				if(0 <= ny && ny < H && 0 <= nx && nx < W) {
-					if(mat[lv][ny][nx] > 0) {
-						if(mat[lv][ny][nx] > 1) cnt += explode(lv, ny, nx);
-						else ++cnt;
-						mat[lv][ny][nx] = 0;
-					}
+				int nx = bx + DELTA[d][0] * r;
+				int ny = by + DELTA[d][1] * r;
+				if(0 <= nx && nx < W && 0 <= ny && ny < H) {
+					cnt += explode(nth, ny, nx);
 				}
 			}
-			
 		}
 		return cnt;
 	}
-	
-	static void compress(int[][] mat) {
+	static void align(int nth) {
 		for(int x = 0; x < W; ++x) {
-			int setY = H - 1; // 다음 벽돌을 배치할 커서
-			for(int lookY = H - 1; lookY >= 0; --lookY) { // 벽돌을 탐색할 커서
-				int ex = mat[lookY][x];
-				if(ex > 0) {
-					mat[lookY][x] = 0;
-					mat[setY--][x] = ex;
+			int readY = H - 1, writeY = H - 1;
+			while(readY >= 0) {
+				if(mat[nth][readY][x] > 0) {
+					int v = mat[nth][readY][x]; 
+					mat[nth][readY][x] = 0;
+					mat[nth][writeY--][x] = v;
 				}
+				--readY;
 			}
 		}
 	}
 	
-	static int dfs(int lv) {
-		if(lv == N + 1) return 0;
-		
+	static int maxRemove(int nth) {
+		if(nth == N + 1) 
+			return 0; // 기저: N번째 구슬까지 사용함
 		int max = 0;
-		for(int i = 0; i < W; ++i) {
-			// 직전 상태 복사
-			for(int y = 0; y < H; ++y) System.arraycopy(mat[lv - 1][y], 0, mat[lv][y], 0, W);
-			// 파괴할 벽돌 찾기
-			int ty = 0, tx = i;
-			while(ty < H && mat[lv][ty][tx] == 0) ++ty;
-			if(ty == H) continue; // 벽돌이 없음
-			
-			int cnt = explode(lv, ty, tx); // 폭파 후 파괴된 벽돌 개수 반환
-			compress(mat[lv]); // 아래로 내리기
-			max = Math.max(max, cnt + dfs(lv + 1));
+		for(int bx = 0; bx < W; ++bx) { // 가능한 모든 위치에서 구슬을 던짐
+			// 직전 상태를 가져옴
+			for(int y = 0; y < H; ++y) System.arraycopy(mat[nth - 1][y], 0, mat[nth][y], 0, W);
+			int by = 0;
+			while(by < H && mat[nth][by][bx] == 0) ++by;
+			if(by == H) continue; // by번 열에 벽돌이 없음
+			int cnt = explode(nth, by, bx); // (bx, by)에 위치한 벽돌을 깨뜨림
+			align(nth); // 아래 방향으로 정렬
+			max = Math.max(max, cnt + maxRemove(nth + 1)); // 최댓값 갱신
 		}
 		return max;
 	}
 	
-	static int solution() { 
-		return dfs(1);
+	static int solution() {
+		return maxRemove(1);
 	}
 	
 	public static void main(String[] args) throws IOException {
 		int T = readInt();
 		for(int t = 1; t <= T; ++t) {
-			int origin = 0; // 벽돌의 초기 개수
+			int blocks = 0;
 			N = readInt(); W = readInt(); H = readInt();
 			for(int y = 0; y < H; ++y) {
 				for(int x = 0; x < W; ++x) {
-					if((mat[0][y][x] = readInt()) != 0) ++origin;
+					if((mat[0][y][x] = readInt()) > 0) ++blocks;
 				}
 			}
-			sb.append("#").append(t).append(" ").append(origin - solution()).append("\n");
+			sb.append("#").append(t).append(" ").append(blocks - solution()).append("\n");
 		}
-		System.out.println(sb);
+		System.out.print(sb);
 	}
 	
 	static int readInt() throws IOException {
 		int c, n = 0;
 		while((c = System.in.read()) <= 0x20);
-		n = c & 0x0F;
+		n = c & 0xF;
 		while((c = System.in.read()) >= 0x30) n = (n << 3) + (n << 1) + (c & 0x0F);
 		if(c == '\r') System.in.read();
 		return n;
