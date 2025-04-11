@@ -27,9 +27,8 @@ public class Main {
 	}
 	
 	static int dfs(int y, int x) {
-		if(dp[y][x] >= 0) return dp[y][x];
-		if(y == M - 1 && x == N - 1) 
-			return dp[y][x] = 1; // 기저
+		if(dp[y][x] >= 0) return dp[y][x]; // 이미 도착점까지 도달하는 경로가 계산됨
+		if(y == M - 1 && x == N - 1) return dp[y][x] = 1; // 기저: 도착점 도달
 		
 		dp[y][x] = 0;
 		int cnt = 0;
