@@ -11,7 +11,7 @@ public class Main {
 	static final int SIZE = 5_000; 
 	// variables
 	static int N, M, Q;
-	static long[][] fenwick = new long[SIZE + 2][SIZE + 2];
+	static long[][] fenwick = new long[SIZE + 1][SIZE + 1];
 	
 	
 	static long queryFenwick(int y, int x) {
@@ -40,32 +40,31 @@ public class Main {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		st = new StringTokenizer(br.readLine());
-		N = Integer.parseInt(st.nextToken());
-		M = Integer.parseInt(st.nextToken());
-		Q = Integer.parseInt(st.nextToken());
-		
+		N = readInt(); M = readInt(); Q = readInt();
 		while(Q-- > 0) {
-			st = new StringTokenizer(br.readLine());
-			int cmd = Integer.parseInt(st.nextToken()); 
-			if(cmd == 1) {
-				int x1 = Integer.parseInt(st.nextToken());
-				int y1 = Integer.parseInt(st.nextToken());
-				int x2 = Integer.parseInt(st.nextToken());
-				int y2 = Integer.parseInt(st.nextToken());
-				int d = Integer.parseInt(st.nextToken());
-				
+			if(readInt() == 1) {
+				int x1 = readInt(), y1 = readInt(), x2 = readInt(), y2 = readInt(), d = readInt();
 				updateFenwick(y1, x1, d);
 				updateFenwick(y1, x2+1, -d);
 				updateFenwick(y2+1, x1, -d);
 				updateFenwick(y2+1, x2+1, d);
 			} else {
-				int x = Integer.parseInt(st.nextToken());
-				int y = Integer.parseInt(st.nextToken());
-				
+				int x = readInt(), y = readInt();
 				sb.append(queryFenwick(y, x)).append("\n");
 			}
 		}
 		System.out.print(sb);
+		
+	}
+	
+	static int readInt() throws IOException{
+		int c, n = System.in.read() & 0x0F, s = 1;
+		if(n == ('-' & 0x0F)) {
+			s = -1;
+			n = 0;
+		}
+		while((c = System.in.read()) >= 0x30) n = (n << 3) + (n << 1) + (c & 0x0F);
+		if(c == '\r') System.in.read();
+		return n * s;
 	}
 }
