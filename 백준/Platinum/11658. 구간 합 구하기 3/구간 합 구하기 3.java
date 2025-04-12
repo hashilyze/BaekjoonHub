@@ -8,68 +8,71 @@ public class Main {
 	static StringTokenizer st;
 	// types
 	// constants
-	static int SIZE = 1024;
+	static final int SIZE = 1024; 
 	// variables
 	static int N, M;
-	static int[][] arr = new int[SIZE + 1][SIZE + 1];
+	static int[][] A = new int[SIZE + 1][SIZE + 1];
 	static int[][] fenwick = new int[SIZE + 1][SIZE + 1];
 	
 	
-	static void updateFenwick(int x, int y, int val) {
-		for(int i = x; i <= N; i += (i & -i)) {
-			for(int j = y; j <= N; j += (j & -j)) {
-				fenwick[i][j] += val;
+	static int queryFenwick(int rangeY, int rangeX) {
+		int sum = 0;
+		int memo = rangeX;
+		while(rangeY > 0) {
+			rangeX = memo;
+			while(rangeX > 0) {
+				sum += fenwick[rangeY][rangeX];
+				rangeX -= rangeX & -rangeX;
 			}
+			rangeY -= rangeY & -rangeY;
 		}
+		return sum;
 	}
-	static int queryFenwick(int x, int y) {
-		int ans = 0;
-		for(int i = x; i > 0; i -= (i & -i)) {
-			for(int j = y; j > 0; j -= (j & -j)) {
-				ans += fenwick[i][j];
+	static void updateFenwick(int posY, int posX, int diff) {
+		int memo = posX;
+		while(posY <= N) {
+			posX = memo;
+			while(posX <= N) {
+				fenwick[posY][posX] += diff;
+				posX += posX & -posX;
 			}
+			posY += posY & -posY;
 		}
-		return ans;
 	}
 	
 	public static void main(String[] args) throws IOException {
-		N = readInt(); M = readInt();
-		for(int x = 1; x <= N; ++x) {
-			for(int y = 1; y <= N; ++y) {
-				arr[x][y] = readInt();
-				updateFenwick(x, y, arr[x][y]);
+		N = readInt();
+		M = readInt();
+		
+		for(int r = 1; r <= N; ++r) {
+			for(int c = 1; c <= N; ++c) {
+				updateFenwick(r, c, A[r][c] = readInt());
 			}
 		}
 		
-		while(M-- > 0) {
-			int w = readInt();
-			switch(w) {
-			case 0:{
-				int x = readInt(), y = readInt(), c = readInt();
-				updateFenwick(x, y, c - arr[x][y]);
-				arr[x][y] = c;
-			} break;
-			case 1:{
-				int x1 = readInt(), y1 = readInt();
-				int x2 = readInt(), y2 = readInt();
-				
-				int ans = queryFenwick(x2, y2)
-						- queryFenwick(x1 - 1, y2)
-						- queryFenwick(x2, y1 - 1)
-						+ queryFenwick(x1 - 1, y1 - 1);
-				
+		for(int q = 0; q < M; ++q) {
+			if(readInt() == 0) {
+				int r = readInt(), c = readInt(), v = readInt();
+				updateFenwick(r, c, v - A[r][c]);
+				A[r][c] = v;
+			} else { // == 1
+				int r1 = readInt(), c1 = readInt(), r2 = readInt(), c2 = readInt();
+				int ans = queryFenwick(r2, c2)
+						- queryFenwick(r2, c1 - 1)
+						- queryFenwick(r1 - 1, c2)
+						+ queryFenwick(r1 - 1, c1 - 1);
 				sb.append(ans).append("\n");
-			} break;
 			}
 		}
 		System.out.println(sb);
 	}
 	
-	static int readInt() throws IOException {
+	static int readInt() throws IOException{
 		int c, n = 0;
 		while((c = System.in.read()) <= 0x20);
 		n = c & 0x0F;
-		while((c = System.in.read()) >= 0x30) n = (n << 3) + (n << 1) + (c & 0x0F); 
+		while((c = System.in.read()) >= 0x30) n = (n << 3) + (n << 1) + (c & 0x0F);
+		if(c == '\r') System.in.read();
 		return n;
 	}
 }
