@@ -21,19 +21,41 @@ public class Main {
 			}
 		}
 		for(int x = SIZE; x <= SIZE*2; ++x) {
-			for(int y = SIZE+1; y <= SIZE*2; ++y) {			
+			for(int y = SIZE+1; y <= SIZE*2; ++y) {	
 				segment[y][x] += segment[y-1][x];
 			}
 		}
 	}
 	
+	static int initSegmentX(int rangeY, int rangeLx, int rangeRx, int indexY, int indexX) {
+		if(rangeLx == rangeRx) return segment[indexY][indexX];
+		int mid = (rangeLx + rangeRx) >> 1;
+		int lhs = initSegmentX(rangeY, rangeLx, mid, indexY, indexX*2);
+		int rhs = initSegmentX(rangeY, mid+1, rangeRx, indexY, indexX*2+1);
+		return segment[indexY][indexX] = Math.max(lhs, rhs);
+	}
+	
+	static void initSegmentY(int rangeLy, int rangeRy, int indexY) {
+		if(rangeLy == rangeRy) {
+			initSegmentX(rangeLy, 1, SIZE, indexY, 1);
+			return;
+		}
+		int mid = (rangeLy + rangeRy) >> 1;
+		initSegmentY(rangeLy, mid, indexY*2);
+		initSegmentY(mid+1, rangeRy, indexY*2+1);
+		
+		for(int x = 1; x < segment[indexY].length; ++x) {
+			segment[indexY][x] = Math.max(segment[indexY*2][x], segment[indexY*2+1][x]);
+		}
+	}
+	
 	static void initSegment() {
 		for(int y = SIZE; y < SIZE*2; ++y) {
-			for(int x = SIZE-1; x > 0; --x) {
+			for(int x = SIZE-1; x >= 1; --x) {
 				segment[y][x] = Math.max(segment[y][x*2], segment[y][x*2+1]);
 			}
 		}
-		for(int y = SIZE-1; y > 0; --y) {
+		for(int y = SIZE-1; y >= 1; --y) {
 			for(int x = 1; x < SIZE*2; ++x) {
 				segment[y][x] = Math.max(segment[y*2][x], segment[y*2+1][x]);
 			}
@@ -70,7 +92,8 @@ public class Main {
 			++segment[SIZE+y2][SIZE+x2];
 		}
 		initImos();
-		initSegment();
+		//initSegment();
+		initSegmentY(1, SIZE, 1);
 		
 		while(M-- > 0) {
 			int y1 = readInt(), x1 = readInt(), y2 = readInt(), x2 = readInt();
