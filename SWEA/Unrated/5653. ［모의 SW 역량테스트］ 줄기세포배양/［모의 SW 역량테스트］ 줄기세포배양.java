@@ -96,16 +96,17 @@ public class Solution {
 		int T = readInt();
 		for(int t = 1; t <= T; ++t) {
 			// 초기화
+			final int size = 2 * K + Math.max(N, M) + 10;
 			sleep = alive = dead = 0;
 			pq.clear();
-			for(int y = 0; y < mat.length; ++y) System.arraycopy(EMPTY_ROW, 0, mat[y], 0, mat.length);
+			for(int y = 0; y < size; ++y) System.arraycopy(EMPTY_ROW, 0, mat[y], 0, size);
 			
 			// Input
 			N = readInt(); M = readInt(); K = readInt();
 			
 			for(int y = 0; y < N; ++y) {
 				for(int x = 0; x < M; ++x) {
-					int py = y + MAX_K, px = x + MAX_K;
+					int py = y + K, px = x + K;
 					int life = readInt();
 					
 					if((mat[py][px] = life) != 0) { // 세포가 존재
