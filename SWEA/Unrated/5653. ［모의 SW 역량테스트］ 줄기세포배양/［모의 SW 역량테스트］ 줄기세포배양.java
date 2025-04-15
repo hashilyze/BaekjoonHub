@@ -27,8 +27,8 @@ public class Solution {
 		@Override
 		public int compareTo(Event o) { 
 			if(this.time != o.time) return this.time-o.time; // 시간이 빠른 순
-			if(this.type != o.type) return this.type-o.type; // 이벤트 우선순위가 높은 순; 활성->번식->사망
-			return o.life-this.life; // 생명력이 높은 순
+			else if(this.type != o.type) return this.type-o.type; // 이벤트 우선순위가 높은 순; 활성->번식->사망
+			else return o.life-this.life; // 생명력이 높은 순
 		}
 	}
 	// constants
@@ -38,11 +38,13 @@ public class Solution {
 	static final int SIZE = (MAX_K + MAX_K + MAX_N + 10);
 	static final int[][] DELTA = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
 	static final int ESLEEP = 0, EALIVE = 1, EREPRODUCT = 2, EDEAD = 3;
+	static final int[] EMPTY_ROW = new int[SIZE];
 	// variables
 	static int N, M, K;
 	static int[][] mat = new int[SIZE][SIZE];
 	static int sleep, alive, dead;
 	static PriorityQueue<Event> pq = new PriorityQueue<>();
+	
 	
 	static void makeCell(int time, int life, int y, int x) {
 		pq.offer(new Event(life, y, x, time + life, EALIVE)); // 활성화
@@ -58,7 +60,7 @@ public class Solution {
 		for(int d = 0; d < DELTA.length; ++d) {
 			int nx = e.x + DELTA[d][0];
 			int ny = e.y + DELTA[d][1];
-			if(mat[ny][nx] == 0) {
+			if(mat[ny][nx] == 0) { // 생명력이 높은 세포가 낮은 세포보다 먼저 번식 -> 가장 생명력이 높은 세포가 번식 
 				mat[ny][nx] = e.life;
 				makeCell(e.time, e.life, ny, nx);
 			}
@@ -96,7 +98,7 @@ public class Solution {
 			// 초기화
 			sleep = alive = dead = 0;
 			pq.clear();
-			for(int y = 0; y < mat.length; ++y) Arrays.fill(mat[y], 0);
+			for(int y = 0; y < mat.length; ++y) System.arraycopy(EMPTY_ROW, 0, mat[y], 0, mat.length);
 			
 			// Input
 			N = readInt(); M = readInt(); K = readInt();
