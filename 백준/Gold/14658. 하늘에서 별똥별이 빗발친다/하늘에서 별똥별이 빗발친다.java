@@ -16,7 +16,7 @@ public class Main {
 	
 	
 	static boolean overlap(int ay, int ax, int y, int x) {
-		return 0 <= y - ay && y - ay <= L && 0 <= x - ax && x - ax <= L;
+		return 0 <= ay - y && ay - y <= L && 0 <= ax - x && ax - x <= L;
 	}
 	
 	static int solution() {
@@ -41,14 +41,13 @@ public class Main {
 		for(int i = 0; i < K; ++i) {
 			X[i] = readInt(); Y[i] = readInt();
 		}
-		System.out.print(K - solution());
+		System.out.print(K-solution());
 	}
 	
 	static int readInt() throws IOException {
 		int c, n = 0;
-		while((c = System.in.read()) <= 0x20);
-		n = c & 0x0F;
 		while((c = System.in.read()) >= 0x30) n = (n << 3) + (n << 1) + (c & 0x0F);
+		//if(c == '\r') System.in.read();
 		return n;
 	}
 }
