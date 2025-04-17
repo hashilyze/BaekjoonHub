@@ -23,15 +23,22 @@ public class Main {
 		
 		int l = 0, r = 0;
 		for(int i = 1; i < N; ++i) {
-			int k = z[i - l];
-			
-			if(i + k >= r) {
-				k = Math.max(r - i, 0);
-				while(i + k < N && cText[k] == cText[i + k]) ++k;
-				l = i;
-				r = i + k;
+			if(i > r) {
+				l = r = i;
+				while(r < N && cText[r - l] == cText[r]) ++r;
+				z[i] = r - l;
+				--r;
+			} else {
+				int k = i - l;
+				
+				if(z[k] < r-i+1) z[i] = z[k];
+				else {
+					l=i;
+					while(r < N && cText[r - l] == cText[r]) ++r;
+					z[i] = r - l;
+					--r;
+				}
 			}
-			z[i] = k;
 		}
 		z[0] = N;
 		return z;
