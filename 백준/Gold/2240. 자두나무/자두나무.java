@@ -15,12 +15,13 @@ public class Main {
 	static int[][] dp;
 	
 	public static void main(String[] args) throws IOException {
+		// Input
 		T = readInt(); W = readInt();
 		locations = new int[T + 1];
 		for(int i = 1; i <= T; ++i) locations[i] = readInt();
-		
-		int max = 0;
 		dp = new int[W + 1][T + 1];
+		// Solution
+		int max = 0;
 		
 		for(int t = 1; t <= T; ++t) dp[0][t] = dp[0][t-1] + (locations[t] & 1);
 		max = dp[0][T];
@@ -31,7 +32,7 @@ public class Main {
 			}
 			max = Math.max(max, dp[w][T]);
 		}
-		
+		// Output
 		System.out.print(max);
 	}
 	
