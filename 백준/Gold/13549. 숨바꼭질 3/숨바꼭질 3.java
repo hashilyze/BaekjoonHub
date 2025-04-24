@@ -11,7 +11,11 @@ public class Main {
 	// variables
 	static int N, K;
 	static int[] isVisited = new int[SIZE + 1];
-
+	
+	static boolean isValid(int x) {
+		return 0 <= x && x <= SIZE && isVisited[x] == -1;
+	}
+	
 	static void solution() {
 		Arrays.fill(isVisited, -1);
 		Deque<Integer> q = new ArrayDeque<Integer>();
@@ -22,16 +26,21 @@ public class Main {
 			int x = q.pollFirst();
 			if (x == K) return;
 
-			for (int nx : new int[] { x - 1, x + 1, x << 1 }) {
-				if (0 <= nx && nx <= SIZE && isVisited[nx] == -1) {
-					if (nx == x * 2) {
-						q.offerFirst(nx);
-						isVisited[nx] = isVisited[x];
-					} else {
-						q.offerLast(nx);
-						isVisited[nx] = isVisited[x] + 1;
-					}
-				}
+			int nx;
+			nx = x - 1;
+			if(isValid(nx)) {
+				q.offerLast(nx);
+				isVisited[nx] = isVisited[x] + (x*2 != nx ? 1 : 0);
+			}
+			nx = x + 1;
+			if(isValid(nx)) {
+				q.offerLast(nx);
+				isVisited[nx] = isVisited[x] + (x*2 != nx ? 1 : 0);
+			}
+			nx = x << 1;
+			if(isValid(nx)) {
+				q.offerFirst(nx);
+				isVisited[nx] = isVisited[x];
 			}
 		}
 	}
