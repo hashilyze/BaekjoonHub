@@ -4,12 +4,12 @@ import java.util.*;
 public class Main {
 	// Input Handler
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+	static StringBuilder sb = new StringBuilder();
 	static StringTokenizer st;	
 	// constants
 	// variables
 	static int N;
-	static String stmt;
+	static char[] cStmt;
 	static int result = Integer.MIN_VALUE;
 	
 	
@@ -22,47 +22,25 @@ public class Main {
 		return 0;
 	}
 	
-	static void nextSubset(int idx, String stmt, int leftNum, char leftOp) {
+	static void eachSubset(int idx, int leftNum, char leftOp) {
 		if(idx >= N) {
 			result = Math.max(result, leftNum);
 			return;
 		}
 		
-		int num1 = stmt.charAt(idx) - '0';
-		nextSubset(idx + 2, stmt, calc(leftNum, num1, leftOp) , stmt.charAt(idx + 1));
+		int num1 = cStmt[idx] - '0';
+		eachSubset(idx + 2, calc(leftNum, num1, leftOp) , cStmt[idx + 1]);
 		if(idx != N - 1) {
-			int num2 = stmt.charAt(idx + 2) - '0';
-			int concat = calc(num1, num2, stmt.charAt(idx + 1));
-			nextSubset(idx + 4, stmt, calc(leftNum, concat, leftOp), stmt.charAt(idx + 3));
+			int num2 = cStmt[idx + 2] - '0';
+			int concat = calc(num1, num2, cStmt[idx + 1]);
+			eachSubset(idx + 4, calc(leftNum, concat, leftOp), cStmt[idx + 3]);
 		}
 	}
 	
 	public static void main(String[] args) throws IOException {
 		N = Integer.parseInt(br.readLine());
-		stmt =  br.readLine() + " ";
-		
-		nextSubset(0, stmt, 0, '+');
-		bw.append(""+result).flush();
-	}
-	
-	
-	static class Token{
-		public char op;
-		public int num;
-		private boolean isNum;
-		
-		
-		public Token() { }
-		public Token(char op) { this.op = op; isNum = false;}
-		public Token(int num) { this.num = num; isNum = true; }
-		
-		boolean isOperator() {return !isNum; }
-		boolean isNumber() {return isNum; }
-		
-		@Override
-		public String toString() {
-			if(isNumber()) return "Token [num=" + num + "]";
-			return "Token [op=" + op + "]";
-		}
+		cStmt =  (br.readLine() + " ").toCharArray();
+		eachSubset(0, 0, '+');
+		System.out.print(result);
 	}
 }
