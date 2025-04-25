@@ -9,15 +9,11 @@ public class Main {
 	// constants
 	// variables
 	static int R, C;
-	static char[][] mat;
+	static StringBuilder[] cols;
 	
 	
 	static String getSuffix(int r, int c) {
-		sb = new StringBuilder();
-		for(int ri = r; ri < R; ++ri) {
-			sb.append(mat[ri][c]);
-		}
-		return sb.toString();
+		return cols[c].substring(r);
 	}
 	
 	static int solution() {
@@ -28,7 +24,7 @@ public class Main {
 			boolean isConflict = false;
 			Set<String> s = new HashSet<>();
 			for(int c = 0; c < C; ++c) {
-				if(!s.add(getSuffix(mid+1, c))) {
+				if(!s.add(cols[c].substring(mid+1))) {
 					isConflict = true;
 					break;
 				}
@@ -41,8 +37,15 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		R = readInt(); C = readInt();
-		mat = new char[R][];
-		for(int r = 0; r < R; ++r) mat[r] = br.readLine().toCharArray();
+		cols = new StringBuilder[C];
+		for(int c = 0; c < C; ++c) cols[c] = new StringBuilder();
+		
+		for(int r = 0; r < R; ++r) {
+			char[] row = br.readLine().toCharArray();
+			for(int c = 0; c < C; ++c) {
+				cols[c].append(row[c]);
+			}
+		}
 		System.out.print(solution());
 	}
 
