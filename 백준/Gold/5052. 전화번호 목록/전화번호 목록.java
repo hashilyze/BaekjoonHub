@@ -5,56 +5,58 @@ public class Main {
 	// Input Handler
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder sb = new StringBuilder();
-	static StringTokenizer st = null;
+	static StringTokenizer st;
+	// constants
+	static final int SIZE = 10_000;	// 단어의 수
+	static final int LENGTH = 10;	// 단어의 최대 길이
+	static final int RANGE = 10;	// 문자의 수
+	static final int ROOT = 0;
 	// types
 	static class Node{
-		boolean isWord = false;
-		int[] next = new int[RANGE];
-		
-		Node() {}
+		int[] nexts = new int[RANGE];
+		boolean isTerminal = false;
 	}
-	// constants
-	static final int RANGE = 10;
-	static final int MAX_N = 10_000;
-	static final int LENGTH = 10;
 	// variables
-	static int N;
 	static int size = 0;
-	static Node[] pool = new Node[MAX_N * LENGTH + 1]; // 트라이의 노드 수는 (단어의 수) * (단어의 길이)
-	static Node root = null;
+	static Node[] pool = new Node[SIZE * LENGTH + 1];
+	
+	
+	static boolean insert(char[] word) {
+		Node cur = pool[ROOT];
+		for(char ch : word){
+			int digit = ch & 0x0F;
+			if(cur.nexts[digit] == 0) {
+				cur.nexts[digit] = ++size;
+				pool[size] = new Node();
+			}
+			// 이미 트라이에 존재하어 단어가, 현재 삽입하는 단어의 접두사인지 확인
+			if(pool[cur.nexts[digit]].isTerminal) return false;
+			
+			cur = pool[cur.nexts[digit]];
+		}
+		
+		cur.isTerminal = true;
+		// 현재 삽입하는 단어가 이미 트라이에 존재하는 단어의 접두사인지 확인
+		return pool[size] == cur; 
+	}
 	
 	public static void main(String[] args) throws IOException {
 		int T = Integer.parseInt(br.readLine());
 		while(T-- > 0) {
-			N = Integer.parseInt(br.readLine());
-			Arrays.fill(pool, 0, size, null);
+			// 초기화
 			size = 0;
+			pool[ROOT] = new Node();
 			
-			boolean flag = true;
-			pool[size++] = (root = new Node());
-			for(int i = 0; i < N; ++i) {
-				int cursor = 0;
-				Node node = root; 
-				char[] numbers = br.readLine().toCharArray();
-				
-				for(int j = 0; j < numbers.length; ++j) {
-					int digit = numbers[j] & 0x0F;
-					if(node.next[digit] == 0) { // 노드 추가
-						node.next[digit] = size;
-						pool[size++] = (new Node());
-					} else { // 이미 존재
-						if(j + 1 == numbers.length) flag = false; // 추가하는 번호가 다른 번호의 접두사
-					}
-					cursor = node.next[digit];
-					node = pool[cursor];
-					if(node.isWord) flag = false;
-				}
-				node.isWord = true;
+			int N = Integer.parseInt(br.readLine());
+			boolean pass = true;
+			while(N-- > 0) {
+				char[] word = br.readLine().toCharArray();
+				pass = pass && insert(word);
 			}
-			sb.append(flag ? "YES\n" : "NO\n");
+			sb.append(pass ? "YES\n" : "NO\n");
+			
+			Arrays.fill(pool, 0, N + 1, null);
 		}
 		System.out.print(sb);
 	}
-	
-
 }
