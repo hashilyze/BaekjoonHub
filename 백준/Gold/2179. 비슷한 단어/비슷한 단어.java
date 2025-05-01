@@ -10,6 +10,7 @@ public class Main {
 	static final int SIZE = 20_000;
 	static final int RANGE = 26;
 	static final int LENGTH = 100;
+	static final int ROOT = 0;
 	// types
 	static class Node{
 		Node[] nexts = new Node[RANGE];
@@ -20,22 +21,27 @@ public class Main {
 	// variables
 	static int N;
 	static String[] words = new String[SIZE];
-	static Node root = new Node(-1);
+	
+	static int size = 0;
+	static int[][] nexts = new int[1 + SIZE * LENGTH][];
+	static int[] conquareds = new int[1 + SIZE * LENGTH];
+	
 	static int maxLength = 0, maxS = 0, maxT = 1;
-	 
 	
 	static void insert(int no, String word) {
 		char[] cWord = word.toCharArray();
 		
 		int lcp = 0;
-		Node cur = root;
+		int cur = ROOT;
 		for(int i = 0; i < cWord.length; ++i) {
 			int chi = cWord[i] - 'a';
 			
-			if(cur.nexts[chi] == null) {
-				cur.nexts[chi] = new Node(no);
+			if(nexts[cur][chi] == 0) {
+				nexts[cur][chi] = ++size;
+				nexts[size] = new int[RANGE];
+				conquareds[nexts[cur][chi]] = no;
 			} else {
-				int s = cur.nexts[chi].conquared;
+				int s = conquareds[nexts[cur][chi]];
 				int t = no;
 				
 				++lcp;
@@ -48,12 +54,14 @@ public class Main {
 					maxT = t;
 				}
 			}
-			cur = cur.nexts[chi];
+			cur = nexts[cur][chi];
 		}
 		maxLength = Math.max(maxLength, lcp);
 	}
 	
 	public static void main(String[] args) throws IOException {
+		nexts[ROOT] = new int[RANGE];
+		
 		N = readInt();
 		for(int i = 0; i < N; ++i) {
 			String word = br.readLine();
