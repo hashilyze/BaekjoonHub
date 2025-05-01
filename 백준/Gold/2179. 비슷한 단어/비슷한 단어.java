@@ -5,100 +5,68 @@ public class Main {
 	// Input Handler
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder sb = new StringBuilder();
-	static StringTokenizer st;
+	static StringTokenizer st = null;
 	// constants
-	static final int MAX_N = 20_000;
+	static final int SIZE = 20_000;
+	static final int RANGE = 26;
+	static final int LENGTH = 100;
 	// types
-	static class Node implements Comparable<Node> {
-		int origin;
-		String word;
+	static class Node{
+		Node[] nexts = new Node[RANGE];
+		int conquared;
 		
-		Node(int origin, String word){ 
-			this.origin=origin; 
-			this.word=word; 
-		}
-		
-		@Override
-		public int compareTo(Node other) { 
-			return this.word.compareTo(other.word);
-		}
-	}
-	static class Prefix implements Comparable<Prefix> {
-		String prefix;
-		int s;
-		int t;
-		
-		public Prefix(String prefix, int s, int t) {
-			this.prefix = prefix;
-			this.s = s;
-			this.t = t;
-		}
-
-		@Override
-		public int compareTo(Prefix o) {
-			if(this.prefix.length() != o.prefix.length()) 
-				return o.prefix.length() - this.prefix.length();
-			if(this.s != o.s) 
-				return this.s - o.s;
-			return this.t - o.t;
-		}
+		Node(int no) {this.conquared=no;}
 	}
 	// variables
 	static int N;
-	static String[] origin = new String[MAX_N];
-	static Node[] nodes = new Node[MAX_N]; 
-	static Map<String, TreeSet<Integer>> map = new HashMap<>();
+	static String[] words = new String[SIZE];
+	static Node root = new Node(-1);
+	static int maxLength = 0, maxS = 0, maxT = 1;
+	 
 	
-	
-	static int getLcp(String s, String t) {
+	static void insert(int no, String word) {
+		char[] cWord = word.toCharArray();
+		
 		int lcp = 0;
-		while(lcp < s.length() && lcp < t.length() && s.charAt(lcp) == t.charAt(lcp)) ++lcp;
-		return lcp;
-	}
-	
-	static Prefix solution() {
-		Arrays.sort(nodes, 0, N);
-		
-		for(int i = 1; i < N; ++i) {
-			Node S = nodes[i-1];
-			Node T = nodes[i];
+		Node cur = root;
+		for(int i = 0; i < cWord.length; ++i) {
+			int chi = cWord[i] - 'a';
 			
-			int lcp = getLcp(S.word, T.word);
-			String prefix = S.word.substring(0, lcp);
-			
-			TreeSet<Integer> set = map.get(prefix);
-			if(set == null) {
-				set = new TreeSet<>();
-				map.put(prefix, set);
+			if(cur.nexts[chi] == null) {
+				cur.nexts[chi] = new Node(no);
+			} else {
+				int s = cur.nexts[chi].conquared;
+				int t = no;
+				
+				++lcp;
+				if(lcp > maxLength
+					|| lcp == maxLength && s < maxS
+					|| lcp == maxLength && s == maxS && t < maxT) {
+					
+					maxLength = lcp;
+					maxS = s;
+					maxT = t;
+				}
 			}
-			
-			set.add(S.origin);
-			set.add(T.origin);
+			cur = cur.nexts[chi];
 		}
-		
-		Prefix max = null; 
-		for(Map.Entry<String, TreeSet<Integer>> entry : map.entrySet()) {
-			String prefix = entry.getKey();
-			TreeSet<Integer> set = entry.getValue();
-			int s = set.pollFirst();
-			int t = set.pollFirst();
-			
-			Prefix next = new Prefix(prefix, s, t);
-			if(max == null || next.compareTo(max) < 0) {
-				max = next;
-			}
-		}
-		return max;
+		maxLength = Math.max(maxLength, lcp);
 	}
 	
 	public static void main(String[] args) throws IOException {
-		N = Integer.parseInt(br.readLine());
+		N = readInt();
 		for(int i = 0; i < N; ++i) {
-			origin[i] = br.readLine();
-			nodes[i] = new Node(i, origin[i]);
+			String word = br.readLine();
+			words[i] = word;
+			insert(i, word);
 		}
-		
-		Prefix max = solution();
-		System.out.print(sb.append(origin[max.s]).append("\n").append(origin[max.t]));
+		System.out.print(sb.append(words[maxS]).append("\n").append(words[maxT]));
+	}
+	
+	static int readInt() throws IOException {
+		int c, n = 0;
+		while((c = System.in.read()) >= 0x30) n = (n << 3) + (n << 1) + (c & 0x0F);
+		if(c == '\r') System.in.read();
+		return n;
 	}
 }
