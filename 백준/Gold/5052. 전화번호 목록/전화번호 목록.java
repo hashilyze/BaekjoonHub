@@ -11,33 +11,29 @@ public class Main {
 	static final int LENGTH = 10;	// 단어의 최대 길이
 	static final int RANGE = 10;	// 문자의 수
 	static final int ROOT = 0;
+	static final int[] DEFAULT_NEXTS = new int[RANGE];
 	// types
-	static class Node{
-		int[] nexts = new int[RANGE];
-		boolean isTerminal = false;
-	}
 	// variables
 	static int size = 0;
-	static Node[] pool = new Node[SIZE * LENGTH + 1];
-	
+	static int[][] nexts = new int[SIZE * LENGTH + 1][RANGE];
+	static boolean[] isTerminals = new boolean[SIZE * LENGTH + 1];
 	
 	static boolean insert(char[] word) {
-		Node cur = pool[ROOT];
+		int cur = ROOT;
 		for(char ch : word){
 			int digit = ch & 0x0F;
-			if(cur.nexts[digit] == 0) {
-				cur.nexts[digit] = ++size;
-				pool[size] = new Node();
+			if(nexts[cur][digit] == 0) {
+				nexts[cur][digit] = ++size;
 			}
 			// 이미 트라이에 존재하어 단어가, 현재 삽입하는 단어의 접두사인지 확인
-			if(pool[cur.nexts[digit]].isTerminal) return false;
+			if(isTerminals[nexts[cur][digit]]) return false;
 			
-			cur = pool[cur.nexts[digit]];
+			cur = nexts[cur][digit];
 		}
 		
-		cur.isTerminal = true;
+		isTerminals[cur] = true;
 		// 현재 삽입하는 단어가 이미 트라이에 존재하는 단어의 접두사인지 확인
-		return pool[size] == cur; 
+		return size == cur; 
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -45,7 +41,6 @@ public class Main {
 		while(T-- > 0) {
 			// 초기화
 			size = 0;
-			pool[ROOT] = new Node();
 			
 			int N = Integer.parseInt(br.readLine());
 			boolean pass = true;
@@ -55,7 +50,8 @@ public class Main {
 			}
 			sb.append(pass ? "YES\n" : "NO\n");
 			
-			Arrays.fill(pool, 0, N + 1, null);
+			for(int i = 0; i <= size; ++i) System.arraycopy(DEFAULT_NEXTS, 0, nexts[i], 0, RANGE); 
+			Arrays.fill(isTerminals, 0, size+1, false);
 		}
 		System.out.print(sb);
 	}
