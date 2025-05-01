@@ -40,8 +40,11 @@ public class Main {
 		int T = Integer.parseInt(br.readLine());
 		while(T-- > 0) {
 			// 초기화
+			for(int i = 0; i <= size; ++i) System.arraycopy(DEFAULT_NEXTS, 0, nexts[i], 0, RANGE); 
+			Arrays.fill(isTerminals, 0, size+1, false);
 			size = 0;
 			
+			// Solution
 			int N = Integer.parseInt(br.readLine());
 			boolean pass = true;
 			while(N-- > 0) {
@@ -49,9 +52,6 @@ public class Main {
 				pass = pass && insert(word);
 			}
 			sb.append(pass ? "YES\n" : "NO\n");
-			
-			for(int i = 0; i <= size; ++i) System.arraycopy(DEFAULT_NEXTS, 0, nexts[i], 0, RANGE); 
-			Arrays.fill(isTerminals, 0, size+1, false);
 		}
 		System.out.print(sb);
 	}
