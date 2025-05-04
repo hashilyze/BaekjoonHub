@@ -33,12 +33,12 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		N = readInt();
 		
-		int end = Integer.MIN_VALUE;
+		int right = Integer.MIN_VALUE;
 		while(N-- > 0) {
 			int x = readInt(), y = readInt();
-			if(y <= end) continue;
-			sum += y - Math.max(end, x);
-			end = y;
+			if(y <= right) continue;
+			sum += y - Math.max(right, x);
+			right = y;
 		}
 		System.out.println(sum);
 	}
