@@ -23,11 +23,6 @@ public class Main {
 			if(this.from != other.from) return this.from - other.from;
 			return this.to - other.to; 
 		}
-
-		@Override
-		public String toString() {
-			return "Travel [from=" + from + ", to=" + to + ", term=" + term + "]";
-		}
 	}
 	// constants
 	// variables
@@ -42,7 +37,7 @@ public class Main {
 		for(int i = 0; i < M; ++i) {
 			Travel target = travels[i];
 			
-			for(int j = 0; j < M; ++j) { // 이전에 갈 수 있는 다른 여행을 탐색
+			for(int j = 0; j < i; ++j) { // 이전에 갈 수 있는 다른 여행을 탐색
 				Travel prev = travels[j];
 				if(prev.to >= target.from) continue;
 				// 여행을 가지 않는 기간 = (이전 여행 일 + 1) ~ (이번 여행 일 - 1) 
