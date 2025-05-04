@@ -11,8 +11,6 @@ public class Main {
 	// constants
 	static final int SIZE = 100_000;
 	// variables
-	static int[] f = new int[SIZE + 1];
-	static int[] g = new int[SIZE + 1];
 	static boolean[] isVisited = new boolean[SIZE + 1];
 	
 	
@@ -22,41 +20,35 @@ public class Main {
 		return a * shift + b;
 	}
 	
-	static void initF() {
-		for(int N = 1; N <= SIZE; ++N) {
-			int x = N;
-			int a = 0, m = 1;
+	static int getF(int N) {
+		int x = N;
+		int a = 0, m = 1;
+		
+		while(x > 0) {
+			int digit = x % 10;
 			
-			while(x > 0) {
-				int digit = x % 10;
-				
-				a += digit;
-				m *= digit;
-				
-				x /= 10;
-			}
-			f[N] = combine(a, m);
+			a += digit;
+			m *= digit;
+			
+			x /= 10;
 		}
+		return combine(a, m);
 	}
 	
 	static int getG(int N) {
-		if(g[N] >= -1) return g[N];
-		
-		if(N == f[N]) return g[N] = 1;
-		if(f[N] > SIZE) return g[N] = -1;
-		if(isVisited[N]) return g[N] = 0;
+		int f = getF(N);
+		if(N == f) return 1;
+		if(f > SIZE) return -1;
+		if(isVisited[N]) return 0;
 		
 		isVisited[N] = true;
-		int ans = getG(f[N]);
+		int ans = getG(f);
 		isVisited[N] = false;
 		return ans;
 	}
 	
 	
 	public static void main(String[] args) throws IOException {
-		initF();
-		Arrays.fill(g, -2);
-		
 		int L = readInt(), R = readInt();
 		int sum = 0;
 		for(int i = L; i <= R; ++i) {
