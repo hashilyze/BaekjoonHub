@@ -10,8 +10,9 @@ public class Main {
 	// constants
 	// variables
 	static int N;
-	static boolean[][] isVisited; 
-	static List<Integer> euler = new ArrayList<>();
+	static boolean[][] isVisited;
+	static int top;
+	static int[] euler;
 	
 	static void eulerPath(int u) {
 		for(int v = 0; v < N; ++v) {
@@ -19,17 +20,19 @@ public class Main {
 			isVisited[u][v] = isVisited[v][u] = true;
 			eulerPath(v);
 		}
-		euler.add(u);
+		euler[top--] = u;
 	} 
 	
 	public static void main(String[] args) throws IOException {
 		N = readInt();
 		isVisited = new boolean[N][N];
 		for(int u = 0; u < N; ++u) isVisited[u][u] = true;
+		top = N * (N - 1) >> 1;
+		euler = new int[top+1];
 		
 		eulerPath(0);
-		for(int i = euler.size() - 1; i >= 0; --i) {
-			sb.append("a").append(euler.get(i)+1).append(" ");
+		for(int v : euler) {
+			sb.append("a").append(v+1).append(" ");
 		}
 		System.out.print(sb);
 	}
