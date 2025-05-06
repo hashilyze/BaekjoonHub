@@ -2,12 +2,12 @@ import java.util.*;
 
 class Solution {
     public int solution(int[] d, int budget) {
-        int sum = 0, cnt = 0;
+        int cnt = 0;
         
         Arrays.sort(d);
         for(int v : d){
-            if(sum + v > budget) break;
-            sum += v;
+            if(v > budget) break;
+            budget -= v;
             ++cnt;
         }
         return cnt;
