@@ -20,8 +20,9 @@ public class Main {
 	}
 	
 	static int N, M;
-	static TreeSet<Problem> tree = new TreeSet<>();
-	static Map<Integer, Integer> map = new HashMap<>();
+	static PriorityQueue<Problem> minHeap = new PriorityQueue<>();
+	static PriorityQueue<Problem> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+	static Map<Integer, Problem> pool = new HashMap<>();
 	
     public static void main(String[] args) throws IOException {
     	N = Integer.parseInt(br.readLine());
@@ -29,8 +30,11 @@ public class Main {
     		st = new StringTokenizer(br.readLine());
     		int P = Integer.parseInt(st.nextToken());
     		int L = Integer.parseInt(st.nextToken());
-    		tree.add(new Problem(P, L));
-    		map.put(P, L);
+    		
+    		Problem problem = new Problem(P, L); 
+    		minHeap.add(problem);
+    		maxHeap.add(problem);
+    		pool.put(P, problem);
     	}
     	
     	M = Integer.parseInt(br.readLine());
@@ -40,19 +44,28 @@ public class Main {
     		if(cmd.equals("recommend")) {
     			int x = Integer.parseInt(st.nextToken());
     			if(x > 0) {
-    				sb.append(tree.last().P).append("\n");
+    				while(pool.getOrDefault(maxHeap.peek().P, null) != maxHeap.peek()) {
+    					maxHeap.poll();
+    				}
+    				sb.append(maxHeap.peek().P).append("\n");
     			} else {
-    				sb.append(tree.first().P).append("\n");
+    				while(pool.getOrDefault(minHeap.peek().P, null) != minHeap.peek()) {
+    					minHeap.poll();
+    				}
+    				sb.append(minHeap.peek().P).append("\n");
     			}
     		} else {
     			if(cmd.equals("add")) {
     				int P = Integer.parseInt(st.nextToken());
         			int L = Integer.parseInt(st.nextToken());
-    				tree.add(new Problem(P, L));
-    				map.put(P, L);
+        			
+        			Problem problem = new Problem(P, L); 
+            		minHeap.add(problem);
+            		maxHeap.add(problem);
+            		pool.put(P, problem);
     			} else {
     				int P = Integer.parseInt(st.nextToken());
-    				tree.remove(new Problem(P, map.get(P)));
+    				pool.remove(P);
     			}
     		}
     	}
