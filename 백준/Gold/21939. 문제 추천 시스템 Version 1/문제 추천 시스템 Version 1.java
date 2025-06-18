@@ -25,11 +25,10 @@ public class Main {
 	static Map<Integer, Problem> pool = new HashMap<>();
 	
     public static void main(String[] args) throws IOException {
-    	N = Integer.parseInt(br.readLine());
+    	N = readInt();
     	for(int i = 0; i < N; ++i) {
-    		st = new StringTokenizer(br.readLine());
-    		int P = Integer.parseInt(st.nextToken());
-    		int L = Integer.parseInt(st.nextToken());
+    		int P = readInt();
+    		int L = readInt();
     		
     		Problem problem = new Problem(P, L); 
     		minHeap.add(problem);
@@ -37,12 +36,11 @@ public class Main {
     		pool.put(P, problem);
     	}
     	
-    	M = Integer.parseInt(br.readLine());
+    	M = readInt();
     	while(M-- > 0) {
-    		st = new StringTokenizer(br.readLine());
-    		String cmd = st.nextToken();
-    		if(cmd.equals("recommend")) {
-    			int x = Integer.parseInt(st.nextToken());
+    		int cmd = getWordFirst();
+    		if(cmd == 'r') {
+    			int x = readInt();
     			if(x > 0) {
     				while(pool.getOrDefault(maxHeap.peek().P, null) != maxHeap.peek()) {
     					maxHeap.poll();
@@ -55,16 +53,16 @@ public class Main {
     				sb.append(minHeap.peek().P).append("\n");
     			}
     		} else {
-    			if(cmd.equals("add")) {
-    				int P = Integer.parseInt(st.nextToken());
-        			int L = Integer.parseInt(st.nextToken());
+    			if(cmd == 'a') {
+    				int P = readInt();
+        			int L = readInt();
         			
         			Problem problem = new Problem(P, L); 
             		minHeap.add(problem);
             		maxHeap.add(problem);
             		pool.put(P, problem);
     			} else {
-    				int P = Integer.parseInt(st.nextToken());
+    				int P = readInt();
     				pool.remove(P);
     			}
     		}
@@ -72,10 +70,20 @@ public class Main {
     	System.out.print(sb);
     }
     
+    static int getWordFirst() throws IOException {
+    	int n = System.in.read();
+    	while(System.in.read() > 0x20) continue;
+    	return n;
+    }
+    
     static int readInt() throws IOException {
-    	int c, n = 0;
+    	int c, n = System.in.read() & 0x0F, s = 1;
+    	if(n == ('-' & 0x0F)) {
+    		n = 0;
+    		s = -1;
+    	}
     	while((c = System.in.read()) >= 0x30) n = (n << 3) + (n << 1) + (c & 0x0F);
     	if(c == '\r') System.in.read();
-    	return n;
+    	return n*s;
     }
 }
