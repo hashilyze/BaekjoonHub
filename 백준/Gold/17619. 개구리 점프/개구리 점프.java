@@ -20,8 +20,7 @@ public class Main {
 		
 		@Override
 		public int compareTo(Log other) {
-			if(this.x1 != other.x1) return this.x1 - other.x1; 
-			return this.x2 - other.x2;
+			return this.x1 - other.x1;
 		}
 	}
 	// constants
