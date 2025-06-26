@@ -19,23 +19,21 @@ public class Main {
 		X = new int[N];
 		for(int i = 0; i < N; ++i) X[i] = readInt();
 		
-		leftSum = new int[N];
-		rightSum = new int[N];
+		leftSum = new int[N+1];  // [i]: Sum(X[j % 2 == 0 && j < i]) 
+		rightSum = new int[N+1]; // [i]: Sum(X[j % 2 == 1 && j >= N - i])
 		
-		leftSum[0] = leftSum[1] = X[0];
-		for(int i = 2; i < N - 1; i += 2) {
-			leftSum[i] = leftSum[i + 1] = leftSum[i - 2] + X[i]; 
+		leftSum[0] = 0;
+		for(int i = 2; i <= N; i += 2) {
+			leftSum[i - 1] = leftSum[i] = leftSum[i - 2] + X[i - 2];   
 		}
-		rightSum[0] = rightSum[1] = X[N - 1];
-		for(int i = 2; i < N - 1; i += 2) {
-			rightSum[i] = rightSum[i + 1] = rightSum[i - 2] + X[N - 1 - i]; 
+		rightSum[0] = 0;
+		for(int i = 2; i <= N; i += 2) {
+			rightSum[i - 1] = rightSum[i] = rightSum[i - 2] + X[N - i + 1]; 
 		}
 		
 		int max = Integer.MIN_VALUE;
-		for(int i = 0; i < N; ++i) {
-			int sum = 0; 
-			if(i - 1 >= 0) sum += leftSum[i - 1];
-			if(N - i - 1 >= 0) sum += rightSum[N - i - 1];
+		for(int i = 0; i <= N; ++i) {
+			int sum = leftSum[i] + rightSum[N - i];
 			if(i % 2 == 1) sum -= X[N - 1];
 			max = Math.max(max, sum);
 		}
