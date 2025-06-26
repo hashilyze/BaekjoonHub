@@ -5,42 +5,54 @@ public class Main {
 	// Input Handler
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder sb = new StringBuilder();
-	static StringTokenizer st;
+	static StringTokenizer st = null;
 	// types
 	static class Line implements Comparable<Line> {
-		int s, e;
-		public Line(int s, int e) { this.s = s; this.e = e; }
+		int x, y;
+		
+		Line() { }
+		Line(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+		
 		@Override
-		public int compareTo(Line o) { return this.s - o.s; }
+		public int compareTo(Line other) {
+			return this.x - other.x;
+		}
 	}
 	// constants
 	// variables
-	static int N; 
+	static int N, Q;
+	static PriorityQueue<Line> pq = new PriorityQueue<>();
+	static int[] ids;
+	
 	
 	public static void main(String[] args) throws IOException {
-		PriorityQueue<Line> pq = new PriorityQueue<>();
-		
 		N = readInt();
-		for(int i = 0; i < N; ++i) pq.offer(new Line(readInt(), readInt()));
+		
+		for(int i = 0; i < N; ++i) {
+			pq.offer(new Line(readInt(), readInt()));
+		}
 		
 		int sum = 0;
-		int s = Integer.MIN_VALUE, e = s;
+		int lastPos = Integer.MIN_VALUE;
 		while(!pq.isEmpty()) {
 			Line line = pq.poll();
 			
-			if(e < line.s) {
-				sum += e - s;
-				s = line.s;
-				e = line.e;
-			} else {
-				e = Math.max(e, line.e);
+			if(lastPos < line.x) { // 선이 이어지지지 않음
+				sum += line.y - line.x;
+			} else if(line.y > lastPos){ // 선이 이어졌고 길이가 연장됨
+				sum += line.y - lastPos;
 			}
+			lastPos = Math.max(lastPos, line.y);
 		}
-		sum += e - s;
-		System.out.println(sum);
+		
+		
+		System.out.print(sum);
 	}
 	
-	static int readInt() throws IOException{
+	static int readInt() throws IOException {
 		int c, n = System.in.read() & 0x0F, s = 1;
 		if(n == ('-' & 0x0F)) {
 			s = -1;
