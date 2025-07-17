@@ -1,79 +1,80 @@
 import java.io.*;
 import java.util.*;
 
-
 public class Main {
-	// Input Handler
-	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	static StringBuilder sb = new StringBuilder();
-	static StringTokenizer st = null;
-	// types
-	// constants
-	static int[] dy = {0,0,1,-1};
-	static int[] dx = {1,-1,0,0};
-	// variables
-	static int R, C;
-	static char[][] mat;
-	static Deque<int[]> jihon = new ArrayDeque<int[]>();
-	static Deque<int[]> fire = new ArrayDeque<int[]>();
-	
-	static int solution() {
-		while(!jihon.isEmpty()) {
-			for(int i = 0, n = jihon.size(); i < n; ++i) {
-				int[] node = jihon.pollFirst();
-				int x = node[0], y = node[1], d = node[2];
-				
-				if(mat[y][x] == 'F') continue;
-				if((x == 0 || x == C - 1) || (y == 0 || y == R - 1)) return d;
-				
-				for(int di = 0; di < dy.length; ++di) {
-					int nx = x + dx[di], ny = y + dy[di];
-					if(nx < 0 || C <= nx || ny < 0 || R <= ny) continue;
-					if(mat[ny][nx] != '.') continue;
-					
-					jihon.offerLast(new int[] {nx, ny, d+1});
-					mat[ny][nx] = 'J';
-				}
-			}
-			
-			for(int i = 0, n = fire.size(); i < n; ++i) {
-				int[] node = fire.pollFirst();
-				int x = node[0], y = node[1];
-				
-				for(int di = 0; di < dy.length; ++di) {
-					int nx = x + dx[di], ny = y + dy[di];
-					if(nx < 0 || C <= nx || ny < 0 || R <= ny) continue;
-					if(mat[ny][nx] == '#' || mat[ny][nx] == 'F') continue;
-					
-					fire.offerLast(new int[] {nx, ny});
-					mat[ny][nx] = 'F';
-				}
-			}
-		}
-		
-		return -1;
-	}
-	
-	public static void main(String[] args) throws IOException {
-		R = readInt();
-		C = readInt();
-		mat = new char[R][];
-		for(int i = 0; i < R; ++i) {
-			mat[i] = br.readLine().toCharArray();
-			for(int j = 0; j < C; ++j) {
-				if(mat[i][j] == 'J') jihon.offer(new int[] {j, i, 1});
-				else if(mat[i][j] == 'F') fire.offer(new int[] {j, i});
-			}
-		}
-		
-		int ans = solution();
-		System.out.print(ans <= 0 ? "IMPOSSIBLE" : ans);
-	}
-	
-	static int readInt() throws IOException {
-		int c, n = 0;
-		while((c = System.in.read()) >= 0x30) n = (n << 3) + (n << 1) + (c & 0x0F);
-		if(c == '\r') System.in.read();
-		return n;
-	}
+
+    private static char[][] map;
+    private static Queue<int[]> people, fire;
+    private static int R, C;
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        R = Integer.parseInt(st.nextToken());
+        C = Integer.parseInt(st.nextToken());
+
+        map = new char[R][C];
+        people = new ArrayDeque<>();
+        fire = new ArrayDeque<>();
+
+        for (int y = 0; y < R; ++y) {
+            String s = br.readLine();
+            
+            for (int x = 0; x < C; ++x) {
+                switch (map[y][x] = s.charAt(x)){
+                    case 'J': people.offer(new int[]{x, y, 1}); break;
+                    case 'F': fire.offer(new int[]{x, y}); break;
+                }
+            }
+        }
+        
+        int ans = bfs();
+        System.out.print(ans <= 0 ? "IMPOSSIBLE" : ans);
+    }
+
+    private static final int[] dx = {0, 0, 1, -1};
+    private static final int[] dy = {1, -1, 0, 0};
+
+    private static int bfs(){
+        while (!people.isEmpty()){
+        	// 사람 이동
+            for(int k = 0, size = people.size(); k < size; ++k) {
+                int[] cur = people.poll();
+                int x = cur[0], y = cur[1], d = cur[2];
+                
+                if(map[y][x] == 'F') continue;
+                if (x == 0 || y == 0 || x == C - 1 || y == R - 1) return d;
+                
+                for (int i=0; i < 4; i++){
+                	int nx = x + dx[i];
+                	int ny = y + dy[i];
+                    
+                	if (nx < 0 || nx >= C || ny < 0 || ny >= R) continue;
+                    if (map[ny][nx] != '.') continue;
+                    
+                    people.offer(new int[]{nx, ny, d + 1});
+                    map[ny][nx] = 'J';
+                }
+            }
+            
+            // 불 이동
+            for(int k = 0, size = fire.size(); k < size; ++k) {
+                int[] cur = fire.poll();
+                int x = cur[0], y = cur[1];
+                
+                for (int i=0;i<4;i++){
+                    int nx = x + dx[i];
+                    int ny = y + dy[i];
+                    
+                    if (nx < 0 || nx >= C || ny < 0 || ny >= R) continue;
+                    if (map[ny][nx] == 'F' || map[ny][nx] == '#') continue;
+
+                    fire.offer(new int[]{nx, ny});
+                    map[ny][nx] = 'F';
+                }
+            }
+        }
+
+        return -1;
+    }
 }
